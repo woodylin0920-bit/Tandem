@@ -43,6 +43,9 @@ cp "$HARNESS_DIR/templates/memory/feedback_workflow_split.md" "$MEM_DIR/"
 cp "$HARNESS_DIR/templates/memory/feedback_model_split.md" "$MEM_DIR/"
 cp "$HARNESS_DIR/templates/memory/env_paths.md" "$MEM_DIR/"
 
+# Substitute project name placeholder in memory files
+sed -i '' "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" "$MEM_DIR"/env_paths.md 2>/dev/null || true
+
 # git init
 git init -q
 git add .
