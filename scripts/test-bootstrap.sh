@@ -37,7 +37,7 @@ bash "$HARNESS_DIR/bootstrap.sh" "$TEST_NAME" >/dev/null
 cd "$TEST_DIR"
 
 echo ""
-echo "=== File presence (13 files) ==="
+echo "=== File presence (15 files) ==="
 assert "CLAUDE.md exists"                  test -f CLAUDE.md
 assert "RESUME.md exists"                  test -f RESUME.md
 assert ".gitignore exists"                 test -f .gitignore
@@ -46,11 +46,13 @@ assert ".claude/commands/inbox.md exists"  test -f .claude/commands/inbox.md
 assert ".claude/commands/resume.md exists" test -f .claude/commands/resume.md
 assert ".claude/commands/phase-gate.md exists"  test -f .claude/commands/phase-gate.md
 assert ".claude/commands/codex-audit.md exists" test -f .claude/commands/codex-audit.md
+assert ".claude/commands/sync.md exists"        test -f .claude/commands/sync.md
 assert "docs/prompts/_inbox.md exists"     test -f docs/prompts/_inbox.md
 assert "docs/prompts/README.md exists"     test -f docs/prompts/README.md
 assert "scripts/archive-prompts.sh exists" test -f scripts/archive-prompts.sh
 assert "scripts/memory.sh exists"          test -f scripts/memory.sh
 assert "scripts/statusline.sh exists"      test -f scripts/statusline.sh
+assert "scripts/session-briefing.sh exists" test -f scripts/session-briefing.sh
 
 echo ""
 echo "=== Substitution ==="

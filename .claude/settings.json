@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "test -f RESUME.md && (echo '=== RESUME.md (head) ==='; head -30 RESUME.md; echo ''; echo '=== recent commits ==='; git log --oneline -5 2>/dev/null) || true"
+            "command": "bash scripts/session-briefing.sh 2>/dev/null || true"
           }
         ]
       }
