@@ -35,6 +35,10 @@ cp "$HARNESS_DIR/templates/.gitignore" .gitignore
 cp "$HARNESS_DIR/templates/prompts/_inbox.md" docs/prompts/_inbox.md
 cp "$HARNESS_DIR/templates/prompts/README.md" docs/prompts/README.md
 
+# Copy archive helper
+mkdir -p scripts
+cp "$HARNESS_DIR/scripts/archive-prompts.sh" scripts/archive-prompts.sh
+
 # Substitute project name placeholder
 sed -i '' "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" CLAUDE.md RESUME.md 2>/dev/null || true
 
