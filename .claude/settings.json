@@ -1,4 +1,11 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(osascript:*)",
+      "Bash(say:*)",
+      "Bash(bash scripts/archive-prompts.sh:*)"
+    ]
+  },
   "hooks": {
     "SessionStart": [
       {
