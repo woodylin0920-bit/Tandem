@@ -3,7 +3,8 @@
     "allow": [
       "Bash(osascript:*)",
       "Bash(say:*)",
-      "Bash(bash scripts/archive-prompts.sh:*)"
+      "Bash(bash scripts/archive-prompts.sh:*)",
+      "Bash(bash scripts/memory.sh:*)"
     ]
   },
   "hooks": {
