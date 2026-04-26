@@ -36,6 +36,12 @@ cd my-new-project
 # Terminal 2 (executor):  claude --model sonnet  # Sonnet, /effort medium
 ```
 
+## See it in action
+
+[`examples/hello-cli/`](examples/hello-cli/) is a static snapshot of a real
+bootstrapped project after one phase shipped. Browse the files + read
+`WALKTHROUGH.md` to see the plan/execute cycle on a concrete artifact.
+
 ## Roadmap
 
 - [x] Phase 1: bootstrap + inbox + memory templates
