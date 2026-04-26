@@ -41,6 +41,7 @@ cp "$HARNESS_DIR/scripts/archive-prompts.sh" scripts/archive-prompts.sh
 cp "$HARNESS_DIR/scripts/memory.sh" scripts/memory.sh
 cp "$HARNESS_DIR/scripts/statusline.sh" scripts/statusline.sh
 cp "$HARNESS_DIR/scripts/session-briefing.sh" scripts/session-briefing.sh
+cp "$HARNESS_DIR/scripts/notify-blocked.sh" scripts/notify-blocked.sh
 cp "$HARNESS_DIR/.claude/commands/sync.md" .claude/commands/
 
 # Substitute project name placeholder

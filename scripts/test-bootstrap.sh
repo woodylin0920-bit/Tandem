@@ -53,6 +53,7 @@ assert "scripts/archive-prompts.sh exists" test -f scripts/archive-prompts.sh
 assert "scripts/memory.sh exists"          test -f scripts/memory.sh
 assert "scripts/statusline.sh exists"      test -f scripts/statusline.sh
 assert "scripts/session-briefing.sh exists" test -f scripts/session-briefing.sh
+assert "scripts/notify-blocked.sh exists"  test -f scripts/notify-blocked.sh
 
 echo ""
 echo "=== Substitution ==="
@@ -62,6 +63,10 @@ assert "no {{PROJECT_NAME}} literal in RESUME.md" "! grep -q '{{PROJECT_NAME}}' 
 echo ""
 echo "=== JSON validity ==="
 assert "settings.json valid JSON" "python3 -c 'import json; json.load(open(\".claude/settings.json\"))'"
+
+echo ""
+echo "=== settings.json content ==="
+assert "Notification hook present" "grep -q Notification .claude/settings.json"
 
 echo ""
 echo "=== Git ==="

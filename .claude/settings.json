@@ -8,7 +8,8 @@
       "Bash(osascript:*)",
       "Bash(say:*)",
       "Bash(bash scripts/archive-prompts.sh:*)",
-      "Bash(bash scripts/memory.sh:*)"
+      "Bash(bash scripts/memory.sh:*)",
+      "Bash(bash scripts/notify-blocked.sh:*)"
     ]
   },
   "hooks": {
@@ -19,6 +20,17 @@
           {
             "type": "command",
             "command": "bash scripts/session-briefing.sh 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/notify-blocked.sh"
           }
         ]
       }

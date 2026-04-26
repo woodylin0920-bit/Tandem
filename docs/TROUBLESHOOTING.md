@@ -245,6 +245,18 @@ git commit -m "chore: backfill /resume slash command from harness Phase 4b"
 
 ---
 
+### Executor stalled silently — no Glass sound but no progress either
+
+**Symptom**: `/inbox` is running but you don't see new commits and you didn't hear Glass. Switching to the executor terminal you find a permission dialog or "Claude is waiting for input" prompt that's been sitting for ages.
+
+**Cause**: The Phase 4d Glass notification only fires at `/inbox` completion. Permission prompts and 60-second idle states are separate Claude Code events — without a hook on those, you sit blind.
+
+**Fix**: After Phase 4-polish round 4 ships, the harness installs a `Notification` event hook (`.claude/settings.json` + `scripts/notify-blocked.sh`) that fires Funk sound + macOS banner when the executor needs your attention. If you're on a fork before round 4 — pull latest, or manually add the hook. Pre-authorize common edits via permissions allowlist (e.g. `"Edit(.claude/**)"`) to reduce permission prompt frequency.
+
+**Pre-emptive workaround during a stuck session**: choose option 2 ("Yes, and allow Claude to edit its own settings for this session") on permission prompts to unblock for the rest of the session.
+
+---
+
 ## Still stuck?
 
 Open an issue using the bug template:
