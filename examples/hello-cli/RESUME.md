@@ -1,31 +1,17 @@
 # hello-cli — RESUME
 
-Reverse-chronological work log. Latest at the top. Each ship-able milestone gets its own block.
+## Status
+Phase 1 shipped: `hello.sh` + smoke test (2 commits, 2026-04-28).
 
----
+## What works
+- `bash hello.sh <name>` prints `Hello, <name>!`
+- `bash tests/test_hello.sh` returns `PASS: 2/2 tests`
 
-## 🟢 [DATE] [Phase / Milestone Name]
+## Recent commits
+- feat: add hello.sh greeting CLI
+- test: smoke test for hello.sh
 
-**Commits**:
-- abc1234 short imperative summary
-- def5678 ...
-
-**What shipped**:
-- bullet 1
-- bullet 2
-
-**Next**:
-1. ...
-2. ...
-
-**Known issues / caveats**:
-- ...
-
-**Verify health (X seconds)**:
-```bash
-~/venvs/hello-cli-venv/bin/pytest -v   # should be N passed
-```
-
----
-
-(older milestones below)
+## Next
+- Phase 2 candidate: support multiple names (`hello.sh alice bob` → multi-line greeting)
+- Or: package as installable command
+- Open `docs/prompts/_inbox.md` and write a planner prompt to begin.
