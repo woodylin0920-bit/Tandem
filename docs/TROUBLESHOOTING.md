@@ -228,6 +228,23 @@ git commit -m "chore: backfill /resume slash command from harness Phase 4b"
 
 ---
 
+### `/inbox` finished but no notification sound or banner
+
+**Symptom**: Executor reports "Notification fired: yes — Glass sound" with exit 0, but you heard / saw nothing.
+
+**Cause** (in order of likelihood):
+1. **macOS sleep silent / Focus Mode / DND is on** — system silently drops all notifications and notification-bound sounds.
+2. **Audio output routed to a Bluetooth device that's disconnected or muted**.
+3. **System volume at 0**.
+4. (rare) `osascript -e 'display notification ... sound name "Glass"'` host app is `Script Editor`, which doesn't have Notifications permission in System Settings → Notifications. Visual notification + bound sound silently dropped.
+
+**Fix**:
+- Step 1: confirm audio path works at all — `afplay /System/Library/Sounds/Glass.aiff`. If you don't hear it, the issue is system-wide (volume / Focus / silent mode), not the harness.
+- Step 2: if afplay works but `/inbox` notification doesn't — open System Settings → Notifications → Script Editor → enable "Allow Notifications".
+- Step 3: if you want guaranteed audio regardless of Focus state, the harness's `/inbox` slash command can be edited to use `afplay /System/Library/Sounds/Glass.aiff &` for sound (always plays) plus `osascript display notification` for visual (best-effort).
+
+---
+
 ## Still stuck?
 
 Open an issue using the bug template:
