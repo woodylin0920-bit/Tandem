@@ -39,6 +39,7 @@ cp "$HARNESS_DIR/templates/prompts/README.md" docs/prompts/README.md
 mkdir -p scripts
 cp "$HARNESS_DIR/scripts/archive-prompts.sh" scripts/archive-prompts.sh
 cp "$HARNESS_DIR/scripts/memory.sh" scripts/memory.sh
+cp "$HARNESS_DIR/scripts/statusline.sh" scripts/statusline.sh
 
 # Substitute project name placeholder
 sed -i '' "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" CLAUDE.md RESUME.md 2>/dev/null || true

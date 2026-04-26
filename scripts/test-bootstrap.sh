@@ -37,7 +37,7 @@ bash "$HARNESS_DIR/bootstrap.sh" "$TEST_NAME" >/dev/null
 cd "$TEST_DIR"
 
 echo ""
-echo "=== File presence (12 files) ==="
+echo "=== File presence (13 files) ==="
 assert "CLAUDE.md exists"                  test -f CLAUDE.md
 assert "RESUME.md exists"                  test -f RESUME.md
 assert ".gitignore exists"                 test -f .gitignore
@@ -50,6 +50,7 @@ assert "docs/prompts/_inbox.md exists"     test -f docs/prompts/_inbox.md
 assert "docs/prompts/README.md exists"     test -f docs/prompts/README.md
 assert "scripts/archive-prompts.sh exists" test -f scripts/archive-prompts.sh
 assert "scripts/memory.sh exists"          test -f scripts/memory.sh
+assert "scripts/statusline.sh exists"      test -f scripts/statusline.sh
 
 echo ""
 echo "=== Substitution ==="
@@ -78,6 +79,7 @@ echo ""
 echo "=== Scripts runnable ==="
 assert "archive-prompts.sh --dry-run runs" "bash scripts/archive-prompts.sh --dry-run"
 assert "memory.sh list runs"               "bash scripts/memory.sh list"
+assert "statusline.sh outputs non-empty"   "bash scripts/statusline.sh | grep -q ."
 
 echo ""
 echo "================================"
