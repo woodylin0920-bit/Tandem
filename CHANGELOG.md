@@ -1,0 +1,35 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+## [0.2.0] - 2026-04-27
+
+### Added
+- `templates/prompts/CODEX_AUDIT.md` — 7-dimension codex consult-mode audit prompt template
+- `templates/prompts/SAFETY_AUDIT.md` — silent-failure / accessibility-focused safety audit prompt template
+- `templates/prompts/ISSUES.md` — batch gh issue create template with severity rubric
+- `templates/scripts/smoke.sh` — real-machine smoke test runner (driver-auto, human-observable)
+- `.claude/commands/codex-audit.md` — `/codex-audit` slash command to fill + run CODEX_AUDIT prompt
+- `.claude/commands/phase-gate.md` — `/phase-gate` slash command (pytest + benchmark + clean-push gate)
+- `docs/CODEX_AUDIT.md` — rationale + real case (omni-sense 6 P0s fixed)
+- `docs/PHASE_GATING.md` — three-gate standard (tests / SLO / clean push) + anti-patterns
+- `docs/SMOKE_TESTING.md` — smoke vs unit test philosophy + real case
+- `docs/FUTURE.md` scaling models + CLI UI ideas (deferred)
+
+### Fixed
+- `bootstrap.sh` now substitutes `{{PROJECT_NAME}}` placeholder in `memory/env_paths.md`
+
+## [0.1.0] - 2026-04-27
+
+### Added
+- `bootstrap.sh` — one-command project scaffolding (git init, templates, memory dir)
+- `.claude/commands/inbox.md` — `/inbox` slash command for plan→execute handoff
+- `templates/CLAUDE.md` — project CLAUDE.md template with `{{PROJECT_NAME}}` placeholder
+- `templates/RESUME.md` — session resume template
+- `templates/.gitignore` — standard Python + macOS gitignore
+- `templates/prompts/_inbox.md` — cross-session planning mailbox template
+- `templates/prompts/README.md` — inbox flow documentation
+- `templates/memory/` — four starter memories (MEMORY.md index, terse-zh feedback, workflow split, model split, env paths)
+- `docs/WORKFLOW.md` — plan/execute split philosophy + Opus/Sonnet model split
+- `README.md` — project overview, quick start, lineage
