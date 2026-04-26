@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+
+# Virtualenv
+venv
+.venv
+env/
+
+# IDE
+.vscode/
+.idea/
+.cursor/
+
+# Claude Code local overrides
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+
+# macOS
+.DS_Store
+
+# Local logs
+*.log
+logs/*.jsonl
+
+# Env / secrets
+.env
+.env.local
+*.key
+
+# Inbox handoff (gitignored — only archived prompts go in git)
+docs/prompts/_inbox.md

@@ -1,0 +1,4 @@
+- [terse Mandarin updates](feedback_terse_zh.md) — reply in 繁中, 1-2 sentences, mid-task pings = status check not stop
+- [planning-here, execute-elsewhere workflow](feedback_workflow_split.md) — this window plans + writes prompts; user pastes into Cursor/other Claude to execute. Don't run code unless asked.
+- [model split: Opus plans, Sonnet executes](feedback_model_split.md) — terminal=Opus 4.7 (planning), Cursor/terminal=Sonnet (executor). Make execution prompts very explicit (Sonnet is more literal).
+- [environment paths](env_paths.md) — Python venv location, hardcoded tooling paths, OS-specific gotchas
