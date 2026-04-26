@@ -23,7 +23,12 @@ cd "$PROJECT_DIR"
 
 # Copy templates
 mkdir -p .claude/commands docs/prompts
+# Copy all slash commands + settings
 cp "$HARNESS_DIR/.claude/commands/inbox.md" .claude/commands/
+cp "$HARNESS_DIR/.claude/commands/resume.md" .claude/commands/
+cp "$HARNESS_DIR/.claude/commands/phase-gate.md" .claude/commands/
+cp "$HARNESS_DIR/.claude/commands/codex-audit.md" .claude/commands/
+cp "$HARNESS_DIR/.claude/settings.json" .claude/settings.json
 cp "$HARNESS_DIR/templates/CLAUDE.md" CLAUDE.md
 cp "$HARNESS_DIR/templates/RESUME.md" RESUME.md
 cp "$HARNESS_DIR/templates/.gitignore" .gitignore
@@ -50,6 +55,9 @@ sed -i '' "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" "$MEM_DIR"/env_paths.md 2>/dev/nu
 git init -q
 git add .
 git commit -q -m "chore: bootstrap from woody-harness"
+
+# Sanity check — RESUME.md is required for SessionStart briefing
+test -f RESUME.md || { echo "[bootstrap] WARN: RESUME.md missing — SessionStart briefing will be silent" >&2; }
 
 echo "[bootstrap] Done."
 echo ""
