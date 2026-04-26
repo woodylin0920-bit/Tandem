@@ -86,14 +86,14 @@ Stack：{{STACK_LIST}}
 
 | 變數 | 範例 |
 |---|---|
-| PROJECT_NAME | omni-sense |
-| PROJECT_DESCRIPTION_1_SENTENCE | 盲人導航 pipeline，本地全離線 |
+| PROJECT_NAME | hello-cli |
+| PROJECT_DESCRIPTION_1_SENTENCE | 範例 CLI 工具（greeting） |
 | COMMIT_SHA | 80bea85 |
 | TEST_COUNT | 62 |
 | STACK_LIST | YOLOv26s + RapidOCR + Gemma 3 1B + mlx-whisper + macOS say |
-| TRIGGER_FLOW | 攝影機 → YOLO/OCR/Depth → 三層 LLM 警示 |
-| FILE_LIST | pipeline.py, chat.py, omni_sense_ocr.py, omni_sense_asr.py |
-| TARGET_USER_DESCRIPTION | 視障使用者（沒有視覺 feedback 通道） |
+| TRIGGER_FLOW | CLI args → bash script → stdout greeting |
+| FILE_LIST | hello.sh, tests/test_hello.sh |
+| TARGET_USER_DESCRIPTION | CLI 使用者 |
 
 ## Verdict 對應動作
 

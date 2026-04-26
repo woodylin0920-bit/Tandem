@@ -29,7 +29,7 @@ woody-harness 把 codex consult-mode 抽成 reusable audit pattern。
 
 兩個獨立跑，因為 lens 不同。一般 audit 標 P2 在 safety audit 可能升 P0。
 
-## 真實案例：omni-sense 2026-04-27
+## 真實案例：solo project audit (2026-04-27)
 
 跑 codex consult mode 7 面向 audit → 6 個 P0：
 1. OCR prompt injection

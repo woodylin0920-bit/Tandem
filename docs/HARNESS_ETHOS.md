@@ -33,7 +33,7 @@ That is enough context to understand the project history without opening a singl
 
 Every phase ends with a `/phase-gate` check. Half-shipped = not shipped. Either a phase passes all three gates (tests green, SLO met, clean push state) or it stays on the branch.
 
-The gate exists because "I'll fix it later" doesn't happen. omni-sense learned this the hard way: six P0s discovered by codex audit after "shipping" Phase 1 — OCR prompt injection, silent hardware failures, a recursive crash in log_event, no watchdog, a bad TTS error path, a temp file leak. None of those would have shipped if a gate had existed earlier.
+The gate exists because "I'll fix it later" doesn't happen. A recent solo project learned this the hard way: six P0s discovered by codex audit after "shipping" Phase 1 — prompt injection, silent device failures, a recursive crash in event logging, no watchdog, a bad error path, a temp file leak. None of those would have shipped if a gate had existed earlier.
 
 Fix before ship. The gate is the forcing function.
 
@@ -65,7 +65,7 @@ See `docs/MEMORY_SYSTEM.md` for the four types, the planner/executor read matrix
 
 ## 6. Boil the lake on P0 before P1
 
-Ship-ready before scope-creep. When omni-sense Phase 2 (OCR) was ready to start, the codex audit surfaced six P0s from Phase 1 that had slipped through. All six were fixed before a single line of Phase 2 code was written.
+Ship-ready before scope-creep. When a recent solo project's Phase 2 was ready to start, the codex audit surfaced six P0s from Phase 1 that had slipped through. All six were fixed before a single line of Phase 2 code was written.
 
 That is the right order. Carrying known P0s across a phase boundary compounds them: Phase 2 code builds on Phase 1 assumptions, and if those assumptions are wrong, Phase 2 is wrong too. Fix the foundation, then build.
 
@@ -77,7 +77,7 @@ The same applies here: don't start Phase 4c (example project) until the Phase 4b
 
 CI is a sieve, not a sign-off.
 
-pytest green means the logic is correct under the test harness's assumptions. It does not mean the hardware works, the OS behaves, or the external dependency responds the way the mock said it would. For omni-sense — a blind-navigation pipeline — silent failure is a safety issue, not a test metric. A failing `say` command with no error feedback is a P0 regardless of what pytest says.
+pytest green means the logic is correct under the test harness's assumptions. It does not mean the hardware works, the OS behaves, or the external dependency responds the way the mock said it would. For accessibility-critical or safety-critical projects, silent failure is a safety issue, not a test metric. A failing audio cue with no error feedback is a P0 regardless of what pytest says.
 
 Every non-trivial project gets a `scripts/smoke.sh`: a driver that prompts the developer to do real-machine observations (hear the audio, see the window, watch the log) and answers y/n. Any ❌ → exit 1. It runs once per phase ship, not in CI.
 

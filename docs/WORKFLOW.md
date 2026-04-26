@@ -1,6 +1,6 @@
 # woody-harness Workflow
 
-This is the day-to-day flow extracted from omni-sense (1 week, 4 phases, 6 P0 safety fixes).
+This is the day-to-day flow battle-tested on solo project work (1 week, 4 phases, 6 P0 safety fixes resolved).
 
 ## The two-session split
 

@@ -12,7 +12,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `templates/scripts/smoke.sh` — real-machine smoke test runner (driver-auto, human-observable)
 - `.claude/commands/codex-audit.md` — `/codex-audit` slash command to fill + run CODEX_AUDIT prompt
 - `.claude/commands/phase-gate.md` — `/phase-gate` slash command (pytest + benchmark + clean-push gate)
-- `docs/CODEX_AUDIT.md` — rationale + real case (omni-sense 6 P0s fixed)
+- `docs/CODEX_AUDIT.md` — rationale + real case (6 P0s caught by audit)
 - `docs/PHASE_GATING.md` — three-gate standard (tests / SLO / clean push) + anti-patterns
 - `docs/SMOKE_TESTING.md` — smoke vs unit test philosophy + real case
 - `docs/FUTURE.md` scaling models + CLI UI ideas (deferred)

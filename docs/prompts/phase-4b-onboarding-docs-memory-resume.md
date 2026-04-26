@@ -11,7 +11,7 @@
 Pre-flight:
 ```bash
 cd /Users/woody/Desktop/repo/public/woody-harness/
-pwd                          # confirm woody-harness, not omni-sense
+pwd                          # confirm woody-harness, not solo project
 git status                   # must be clean
 git pull --ff-only origin main
 ls docs/                     # baseline: TUTORIAL/HARNESS_ETHOS/TROUBLESHOOTING/MEMORY_SYSTEM should NOT exist yet
@@ -95,7 +95,7 @@ Sessions are cheap, context is precious. Memory is checked-in-able if desired.
 See MEMORY_SYSTEM.md.]
 
 ## 6. Boil the lake on P0 before P1
-[Ship-ready before scope-creep. omni-sense Phase 1 had 6 P0 fixes shipped before
+[Ship-ready before scope-creep. solo project Phase 1 had 6 P0 fixes shipped before
 Phase 2 OCR began. Don't carry tech debt across phase boundaries.]
 
 ## 7. Real-machine smoke > CI green
@@ -109,7 +109,7 @@ Phase 2 OCR began. Don't carry tech debt across phase boundaries.]
 A workflow scaffold for one person + Claude Code. For orchestration → langgraph / autogen / etc.]
 ```
 
-**Tone**: terse, opinionated, imperative or first-person plural. No corporate hedging. Reference real omni-sense incidents where it sharpens the point.
+**Tone**: terse, opinionated, imperative or first-person plural. No corporate hedging. Reference real solo project incidents where it sharpens the point.
 **Length**: 150-250 lines.
 **Commit**: `docs: add HARNESS_ETHOS.md — 9 principles behind the framework`
 

@@ -27,7 +27,7 @@ Mock-based unit test 不夠。Phase ship 前必跑 real-machine smoke。
 - user 回答 y / n
 - 任一 ❌ → exit 1
 
-## 實際案例：omni-sense 2026-04-27
+## 實際案例：solo project audit (2026-04-27)
 
 4 個 smoke test：
 - Test 1: announce_error 真的響（Funk.aiff + 中文 say）✅
@@ -35,7 +35,7 @@ Mock-based unit test 不夠。Phase ship 前必跑 real-machine smoke。
 - Test 3: OCR injection guard（adversarial sign 真機驗）⏳
 - Test 4: Ollama down → watchdog 出聲 ⏳
 
-Test 3 是最關鍵 — 沒驗證之前不敢給視障者用。
+Test 3 是最關鍵 — 沒驗證之前不敢交付給安全性需求高的使用者。
 
 ## Anti-pattern
 

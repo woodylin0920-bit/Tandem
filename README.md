@@ -4,7 +4,7 @@
 
 Solo developer framework for fast-shipping AI-augmented projects with Claude Code (Opus + Sonnet split).
 
-Extracted from real-world omni-sense development (2026-04-21 → 2026-04-27): 4 ship-able phases + safety audit in 1 week.
+Extracted from real-world solo project development: 4 ship-able phases + safety audit in 1 week.
 
 ## What you get
 
@@ -18,7 +18,7 @@ Extracted from real-world omni-sense development (2026-04-21 → 2026-04-27): 4 
 
 - **vs. raw Claude Code**: gives you the prompt-handoff + memory + phase-gate scaffolding instead of starting blank every session
 - **vs. taskmaster / agent frameworks**: pure bash + markdown, zero deps, one-command bootstrap, fork-friendly
-- **vs. writing your own**: extracted from a real shipped project (omni-sense), not a theoretical framework
+- **vs. writing your own**: extracted from real shipped projects, not a theoretical framework
 
 ## Quick start
 
@@ -42,10 +42,6 @@ cd my-new-project
 - [x] Phase 2: codex audit + safety audit + smoke test templates
 - ~~Phase 3: CI / hooks / push notifications~~ (deferred — see FUTURE.md)
 - [ ] Phase 4: philosophy docs + example project + user research framework
-
-## Lineage
-
-Born from [omni-sense](https://github.com/woodylin0920-bit/omni-sense), a fully-offline blind-navigation pipeline shipped solo in a week.
 
 ## License
 

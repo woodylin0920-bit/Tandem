@@ -6,7 +6,7 @@ Ideas captured during development, deferred until real demand surfaces. Each ent
 
 ## Multi-worker orchestrator + dashboard
 
-**Captured**: 2026-04-27 (during omni-sense + harness Phase 1 dev)
+**Captured**: 2026-04-27 (during harness Phase 1 dev)
 
 ### The vision
 
@@ -16,7 +16,7 @@ Ideas captured during development, deferred until real demand surfaces. Each ent
 └─────────────────────────────────────────────┘
    ↓ writes
 ┌─ Inboxes (filesystem mailbox) ──────────────┐
-│  inbox-omni-sense.md                        │
+│  inbox-project-a.md                         │
 │  inbox-harness-phase-N.md                   │
 │  inbox-experiment-X.md                      │
 └─────────────────────────────────────────────┘
@@ -27,7 +27,7 @@ Ideas captured during development, deferred until real demand surfaces. Each ent
 └─────────────┘ └─────────────┘ └─────────────┘
               ↓ status updates
 ┌─ Dashboard ─────────────────────────────────┐
-│  ▼ omni-sense [working] commit 3/5 ...      │
+│  ▼ project-a   [working] commit 3/5 ...     │
 │  ▼ harness    [done]    all green ✓         │
 │  ▼ experiment [blocked] needs decision      │
 └─────────────────────────────────────────────┘
