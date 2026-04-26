@@ -83,6 +83,10 @@ assert "feedback_model_split.md present"    test -f "$MEM_DIR/feedback_model_spl
 assert "env_paths.md present"          test -f "$MEM_DIR/env_paths.md"
 
 echo ""
+echo "=== Statusline ==="
+assert "statusline shows empty on fresh bootstrap" "bash scripts/statusline.sh | grep -q 'empty'"
+
+echo ""
 echo "=== Scripts runnable ==="
 assert "archive-prompts.sh --dry-run runs" "bash scripts/archive-prompts.sh --dry-run"
 assert "memory.sh list runs"               "bash scripts/memory.sh list"
