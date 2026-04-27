@@ -10,7 +10,9 @@ The entire harness is `bootstrap.sh`, a handful of `.md` files, and one `setting
 
 This is a deliberate constraint. Zero dependencies means a fork always works: `git clone`, `bash bootstrap.sh`, done — no `npm install`, no venv setup, no version mismatch between your machine and mine. If a dependency breaks (and they do), you can debug with `cat` instead of diving into `node_modules`.
 
-Markdown is the right format here because both humans and LLMs read it without tooling. A `WORKFLOW.md` opened in a code editor looks fine. The same file pasted into a Claude prompt context also works fine. There is no "view-source" mismatch.
+Markdown is the right format here because both humans and LLMs read it without tooling. A `WORKFLOW.md` opened in a code editor looks fine. The same file pasted into a model's prompt context also works fine. There is no "view-source" mismatch.
+
+And because the entire interface is markdown, the framework isn't bound to one AI vendor. Memory files, inbox prompts, slash commands — all plain text. Tandem ships with Claude Code as the primary example because that's what I use, but porting to a different model is mechanical: read the same files, produce the same outputs.
 
 ---
 
@@ -33,7 +35,7 @@ That is enough context to understand the project history without opening a singl
 
 Every phase ends with a `/phase-gate` check. Half-shipped = not shipped. Either a phase passes all three gates (tests green, SLO met, clean push state) or it stays on the branch.
 
-The gate exists because "I'll fix it later" doesn't happen. A recent solo project learned this the hard way: six P0s discovered by codex audit after "shipping" Phase 1 — prompt injection, silent device failures, a recursive crash in event logging, no watchdog, a bad error path, a temp file leak. None of those would have shipped if a gate had existed earlier.
+The gate exists because "I'll fix it later" doesn't happen. Six P0 issues surfaced via codex audit after Phase 1 was "done" on a real solo project (see [ATTRIBUTION.md](../ATTRIBUTION.md)). All six were fixed before any Phase 2 code was written. Carrying known P0s across a phase boundary compounds them.
 
 Fix before ship. The gate is the forcing function.
 
@@ -41,31 +43,34 @@ Fix before ship. The gate is the forcing function.
 
 ## 4. Plan / execute split
 
-Opus plans. Sonnet executes. The two sessions never run in the same terminal.
+A planner session writes prompts. An executor session ships them. The two never run in the same terminal.
 
-Sonnet is more literal than Opus — that is a feature, not a limitation. It forces the planner to be explicit. If Sonnet misunderstands a prompt, the prompt was ambiguous. Fix the prompt, not Sonnet.
+In my setup the planner is Claude Code with Opus and the executor is Claude Code with Sonnet — Sonnet's literalness is a feature, not a limitation. It forces explicit prompts; if the executor misunderstands, the prompt was ambiguous. Fix the prompt, not the model.
 
-Concretely: Opus writes a fully self-contained `_inbox.md` prompt with exact file content, exact commit messages, exact verification commands. Sonnet reads it and executes without asking questions. No context bleed, no re-deliberation.
+But the split is the principle, not the model pairing. Any pair where one side is reasoning-stronger (planner) and the other is execution-strong (executor) works — Claude/Codex, Claude/Claude, two human-AI pairs across timezones, etc. The prompt is just markdown.
 
-See `WORKFLOW.md` for the session diagram and rules of thumb.
+Concretely: planner writes a fully self-contained `_inbox.md` prompt with exact file content, exact commit messages, exact verification commands. Executor reads it and ships without asking questions. No context bleed, no re-deliberation.
+
+See `WORKFLOW.md` for the session diagram.
 
 ---
 
 ## 5. Memory-first context
 
-Context lives in `~/.claude-work/projects/<slug>/memory/`, not in chat scrollback.
+Context lives in `~/.claude-work/`, not in chat scrollback. Two layers:
 
-Chat scrollback dies when you close the terminal. Memory persists. The harness ships four memory templates on bootstrap: terse communication style, workflow split roles, model split behavior, and environment paths. These load automatically on every new session — Opus and Sonnet both start with the same shared context without you pasting anything.
+- `~/.claude-work/_shared/memory/` — preferences and workflow rules that apply to **every** project. Terse-Mandarin replies, planner/executor split, macOS notification quirks, "don't silently continue on error" — these are about *me*, not about any one project.
+- `~/.claude-work/projects/<slug>/memory/` — current handoff state, phase progress, project-specific decisions. Lives per-project.
 
-Memory is checked-in-able if you want it in the repo. By default it lives outside (so it can cover multiple projects without duplication). Add entries as you learn things — what went wrong, what your venv path is, what the current handoff state is. Remove stale entries before they mislead you.
+Shared layer symlinks into every project's memory dir. Add a feedback memory once, get it everywhere I work. **This is the longest-running win of using Tandem**: every project starts already understanding my conventions. The next blank-slate session is many projects ago, not this morning.
 
-See `docs/MEMORY_SYSTEM.md` for the four types, the planner/executor read matrix, and how to add entries.
+See `docs/SHARED_MEMORY.md` for the layer architecture and `docs/MEMORY_SYSTEM.md` for the four memory types.
 
 ---
 
 ## 6. Boil the lake on P0 before P1
 
-Ship-ready before scope-creep. When a recent solo project's Phase 2 was ready to start, the codex audit surfaced six P0s from Phase 1 that had slipped through. All six were fixed before a single line of Phase 2 code was written.
+Ship-ready before scope-creep. Six P0 issues surfaced via codex audit after Phase 1 was "done" on a real solo project (see [ATTRIBUTION.md](../ATTRIBUTION.md)). All six were fixed before a single line of Phase 2 code was written.
 
 That is the right order. Carrying known P0s across a phase boundary compounds them: Phase 2 code builds on Phase 1 assumptions, and if those assumptions are wrong, Phase 2 is wrong too. Fix the foundation, then build.
 
@@ -77,7 +82,7 @@ The same applies here: don't start Phase 4c (example project) until the Phase 4b
 
 CI is a sieve, not a sign-off.
 
-pytest green means the logic is correct under the test harness's assumptions. It does not mean the hardware works, the OS behaves, or the external dependency responds the way the mock said it would. For accessibility-critical or safety-critical projects, silent failure is a safety issue, not a test metric. A failing audio cue with no error feedback is a P0 regardless of what pytest says.
+pytest green means the logic is correct under the test harness's assumptions. It does not mean the hardware works, the OS behaves, or the external dependency responds the way the mock said it would. For projects where silent failure is a real risk (hardware control, side effects on real users, anything where "green test, broken behavior" has cost), pytest doesn't tell you the truth.
 
 Every non-trivial project gets a `scripts/smoke.sh`: a driver that prompts the developer to do real-machine observations (hear the audio, see the window, watch the log) and answers y/n. Any ❌ → exit 1. It runs once per phase ship, not in CI.
 
@@ -95,12 +100,22 @@ This is intentional. A developer workflow tool should not have SLAs. Fork it, st
 
 ---
 
-## 9. What this is NOT
+## 9. Cross-vendor quality gates
 
-Not an agent framework. Not taskmaster. Not a productivity app with a dashboard.
+Quality assurance should not depend on a single vendor agreeing with itself.
 
-Tandem is a workflow scaffold for **one person + Claude Code**. The "orchestration" is you — picking what to build, deciding tradeoffs, writing prompts that Sonnet can execute. The harness provides the folder structure, the handoff convention, the memory templates, and the phase gate. You provide the judgment.
+Tandem ships `/codex-audit` as a slash command — at the end of each phase, OpenAI Codex reviews what Claude shipped against a 7-dimension prompt (`templates/prompts/CODEX_AUDIT.md`). The two systems disagree often enough that the audit catches real issues — bias overlap is lower than running two Claude sessions over the same code.
 
-For multi-agent orchestration → langgraph, autogen, or similar. For automated task management → taskmaster. For Claude Code keyboard shortcuts and settings → `/config`. Those are different tools for different problems.
+Same logic on the input side: any model that can read markdown can be a planner or executor. The framework doesn't require one vendor; it works because the *interface* is text, not because of any specific tool integration.
 
-This tool is for the developer who wants to move fast with AI assistance without giving up clarity about what is happening and why.
+---
+
+## 10. What this is NOT
+
+Not an agent framework. Not taskmaster. Not a productivity dashboard.
+
+Tandem is workflow scaffolding for **one engineer + their AI of choice**. The "orchestration" is you — picking what to build, deciding tradeoffs, writing prompts the executor session can ship without re-asking. The framework provides the folder structure, the handoff convention, the memory layer, and the phase gate. You provide the judgment.
+
+For multi-agent orchestration → langgraph, autogen, similar. For task management → taskmaster. For Claude Code keyboard shortcuts → `/config`. Different tools, different problems.
+
+This is for the engineer who wants to move fast with AI assistance without giving up clarity about what is happening and why.
