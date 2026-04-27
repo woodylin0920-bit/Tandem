@@ -3,14 +3,16 @@
 # Prints RESUME.md head + recent commits + latest archive Result block.
 set -e
 
-test -f RESUME.md || exit 0
+if [ -f RESUME.md ]; then
+    echo '=== RESUME.md (head) ==='
+    head -30 RESUME.md
+    echo ''
+fi
 
-echo '=== RESUME.md (head) ==='
-head -30 RESUME.md
-echo ''
 echo '=== recent commits ==='
 git log --oneline -5 2>/dev/null || true
 echo ''
+
 latest=$(ls -t docs/prompts/[0-9]*-*.md docs/prompts/phase-*.md 2>/dev/null | grep -v '_archive/' | head -1 || true)
 if [ -n "$latest" ]; then
     echo '=== latest archive Result ==='
