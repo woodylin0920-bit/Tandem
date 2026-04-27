@@ -20,6 +20,10 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **`templates/CLAUDE.md` Workflow section is model-agnostic** (Phase A leftover caught in Phase B). Workflow describes the role (reasoning-strong planner / execution-strong executor) with Claude Code as my-setup example, links `docs/MODEL_GUIDE.md` for selection guidance.
 - **`scripts/test-bootstrap.sh` now asserts 36/36** (was 32/32) — added 4 new assertions for `scripts/lessons.sh` (existence, executable bit, `count` subcommand runs, `help` subcommand runs).
 
+### Fixed
+
+- **Lesson detection regex precision.** Phase C's first-iteration detection produced 2 false positives on initial dogfood — Status template line `**Status**: ✅ shipped | ❌ blocked` and bash code blocks containing `echo "FAIL: ..."` both matched the heuristic. Fixed by (a) only matching Status as blocked when ❌ is present *and* ✅ is absent from the line, (b) restricting FAIL/keyword scans to the `## Result` block content with code fences stripped, (c) filtering Blockers template placeholders (`<description>`). Cleared the 2 false-positive raw entries from staging in the same round.
+
 ### Notes
 
 - Lessons loop self-validated on this release: Phase C archive run detected lesson signals in past v0.4.2 + Phase B archives (their verification block contained `FAIL` placeholders) and staged 2 raw entries automatically. Feature is end-to-end functional.
