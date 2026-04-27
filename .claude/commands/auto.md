@@ -15,14 +15,9 @@ description: 讀 docs/prompts/_queue/ 目錄，依時戳順序消化所有 task
 
    ```markdown
    ## Result
-
-   **Status**: ✅ shipped | ⚠️ blocked | ❌ failed
-   **Commits**: <count>
-   <git log --oneline of new commits this task, one per line>
-
-   **Verification**: <1-2 line test/smoke output>
-   **Push**: ✅ pushed to origin/main | ❌ <reason>
-   **Blockers**: <description, or "none">
+   Status: ✅ shipped | ⚠️ blocked | ❌ failed
+   Commits: <git log --oneline of new commits, one per line>
+   Notes: <一行 verification 摘要 or 空>
    ```
 
 5. 跑 `bash scripts/auto-loop.sh archive <path>` 把該檔搬進 `_archive/YYYY-MM/`（含 Result block）

@@ -15,14 +15,9 @@ description: 讀 docs/prompts/_inbox.md 的 prompt 開工，完成後 append Res
 
       ```markdown
       ## Result
-
-      **Status**: ✅ shipped | ⚠️ blocked | ❌ failed
-      **Commits**: <count>
-      <git log --oneline of new commits this session, one per line>
-
-      **Verification**: <1-2 line test/smoke/dry-run output>
-      **Push**: ✅ pushed to origin/main | ❌ <reason>
-      **Blockers**: <description, or "none">
+      Status: ✅ shipped | ⚠️ blocked | ❌ failed
+      Commits: <git log --oneline of new commits, one per line>
+      Notes: <一行 verification 摘要 or 空>
       ```
 
    c. 清空 `docs/prompts/_inbox.md` 為單一 newline
