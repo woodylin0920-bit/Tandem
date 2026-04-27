@@ -78,8 +78,8 @@ bootstrapped project after one phase shipped. Browse the files + read
 - [x] **Phase A** — narrative refactor for model-agnostic positioning (README + HARNESS_ETHOS + ATTRIBUTION + TUTORIAL + WORKFLOW + CONTRIBUTING + examples)
 - [x] **v0.4.2 release** — Phase A + T-1a integration + Phase 0 rename
 - [x] **Phase B** — model + effort selection guide (`docs/MODEL_GUIDE.md` + `## Execution profile` convention)
-- [x] **Phase C** — lessons loop (auto-stage on archive → `lessons.sh extract`/`review` → promote to shared memory)
-- [x] **v0.5.0 release** — Phase B + Phase C
+- [x] **Phase C** — lessons loop (auto-stage on archive → `lessons.sh extract`/`review` → promote to shared memory; detection regex precision fixed in v0.5.0)
+- [x] **v0.5.0 release** — Phase B + Phase C + lesson detection precision fix
 - ~~Phase 3: CI / hooks / push notifications~~ (deferred — see [docs/FUTURE.md](docs/FUTURE.md))
 
 ## Contributing
