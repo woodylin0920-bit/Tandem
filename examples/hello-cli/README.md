@@ -1,5 +1,7 @@
 # hello-cli — example project
 
+> This snapshot was produced with Claude Code (Opus + Sonnet) — concrete artifact, not a generalized example. The workflow itself is model-agnostic; the choice of Claude here just reflects what was actually used to ship.
+
 ## What this is
 
 A static snapshot of a real Tandem project after one phase shipped.
