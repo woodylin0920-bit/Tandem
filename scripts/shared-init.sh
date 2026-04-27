@@ -4,28 +4,35 @@
 # Usage: bash scripts/shared-init.sh
 set -euo pipefail
 
-REMOTE_REPO="https://github.com/woodylin0920-bit/claude-shared.git"
-SHARED_DIR="$HOME/.claude-work/shared"
-
-echo "[shared-init] target: $SHARED_DIR"
-echo "[shared-init] remote: $REMOTE_REPO"
-echo ""
-
-# 1. Check gh auth
+# 1. Check gh auth and determine owner
 if ! gh auth status --hostname github.com >/dev/null 2>&1; then
     echo "ERROR: not authenticated with GitHub. Run: gh auth login" >&2
     exit 1
 fi
 
+OWNER="${TANDEM_SHARED_OWNER:-$(gh api user --jq .login 2>/dev/null || true)}"
+if [ -z "$OWNER" ]; then
+    echo "ERROR: cannot determine GitHub owner — set TANDEM_SHARED_OWNER or run 'gh auth login'" >&2
+    exit 1
+fi
+
+REMOTE_REPO="https://github.com/$OWNER/claude-shared.git"
+SHARED_DIR="$HOME/.claude-work/shared"
+
+echo "[shared-init] owner: $OWNER"
+echo "[shared-init] target: $SHARED_DIR"
+echo "[shared-init] remote: $REMOTE_REPO"
+echo ""
+
 # 2. Create remote repo (idempotent: skip if already exists)
-if gh repo view woodylin0920-bit/claude-shared >/dev/null 2>&1; then
+if gh repo view "$OWNER/claude-shared" >/dev/null 2>&1; then
     echo "[shared-init] remote repo already exists — skipping creation"
 else
     echo "[shared-init] creating GitHub private repo..."
-    gh repo create woodylin0920-bit/claude-shared \
+    gh repo create "$OWNER/claude-shared" \
         --private --clone=false \
         --description "Cross-project shared layer for Claude Code self-use harness (memory + lessons)"
-    echo "[shared-init] created: https://github.com/woodylin0920-bit/claude-shared"
+    echo "[shared-init] created: https://github.com/$OWNER/claude-shared"
 fi
 
 # 3. Initialize local dir (idempotent)
@@ -39,10 +46,10 @@ else
     git init
     git branch -M main
 
-    cat > README.md <<'EOF'
+    cat > README.md <<EOF
 # claude-shared
 
-Cross-project shared layer for the [Tandem](https://github.com/woodylin0920-bit/Tandem) Claude Code self-use harness.
+Cross-project shared layer for the [Tandem](https://github.com/$OWNER/Tandem) Claude Code self-use harness.
 
 ## What's here
 
