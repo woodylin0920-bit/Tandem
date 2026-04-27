@@ -563,19 +563,28 @@ SHARED_MEM="$HOME/.claude-work/_shared/memory"
 SHARED_SEEDS=(feedback_terse_zh.md feedback_workflow_split.md feedback_model_split.md)
 PROJECT_SEEDS=(env_paths.md)
 
-# 1. First bootstrap: seed _shared/ (skip if already exists)
-if [ ! -d "$SHARED_MEM" ]; then
-    mkdir -p "$SHARED_MEM"
-    for f in "${SHARED_SEEDS[@]}"; do
+# 1. Seed _shared/ — idempotent per-file (don't skip if dir exists, only skip individual files)
+mkdir -p "$SHARED_MEM"
+
+seeded_any=0
+for f in "${SHARED_SEEDS[@]}"; do
+    if [ ! -f "$SHARED_MEM/$f" ]; then
         cp "$HARNESS_DIR/templates/memory/$f" "$SHARED_MEM/"
-    done
+        seeded_any=1
+    fi
+done
+
+# Seed shared MEMORY.md if missing — don't clobber if user has promoted content into it
+if [ ! -f "$SHARED_MEM/MEMORY.md" ]; then
     cat > "$SHARED_MEM/MEMORY.md" <<'EOF'
 - [terse Mandarin updates](feedback_terse_zh.md) — reply in 繁中, 1-2 sentences, mid-task pings = status check not stop
 - [planning-here, execute-elsewhere workflow](feedback_workflow_split.md) — this window plans + writes prompts; user runs them via /inbox in separate Sonnet session.
 - [model split: Opus plans, Sonnet executes](feedback_model_split.md) — terminal=Opus 4.7 (planning), terminal=Sonnet (executor). Make execution prompts very explicit.
 EOF
-    echo "[bootstrap] Seeded shared memory at $SHARED_MEM (first time)"
+    seeded_any=1
 fi
+
+[ "$seeded_any" = "1" ] && echo "[bootstrap] Seeded missing shared memory files at $SHARED_MEM"
 
 # 2. Project memory dir: only project-specific files
 mkdir -p "$MEM_DIR"
