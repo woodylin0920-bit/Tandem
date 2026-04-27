@@ -5,11 +5,18 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+(empty — next round adds entries)
+
+## [0.4.2] - 2026-04-28
+
 ### Added
 - Shared memory layer at `~/.claude-work/_shared/memory/` — user-level preferences/rules/lessons that apply across all projects (T-1a-α foundation). New `bash scripts/memory.sh sync` subcommand symlinks shared into project memory dir + regenerates `MEMORY.md` as a combined index. `bootstrap.sh` seeds shared on first run; new project memory only contains project-specific files. See [docs/SHARED_MEMORY.md](docs/SHARED_MEMORY.md). Migration tooling for existing projects coming in T-1a-β.
 - `scripts/memory.sh promote` — interactive migration helper for moving existing project memory entries into the shared layer (promote/keep/delete) (T-1a-β; completes the cross-project shared memory feature).
 
 ### Changed
+- **Phase A: model-agnostic narrative refactor.** README + HARNESS_ETHOS + TUTORIAL + WORKFLOW + CONTRIBUTING + examples/hello-cli/ all rewritten for self-use-honest positioning, light tandem metaphor, and Claude-as-primary-example with markdown-portable interface. Origin (omni-sense) moved to `ATTRIBUTION.md`. Cross-project shared memory promoted to招牌 wedge replacing accessibility audit. New `## 9. Cross-vendor quality gates` section in HARNESS_ETHOS.
+- **Phase 0 follow-up + bootstrap shared-seed idempotency fix.** memory dir 內容 sed + 舊 slug 清 + bootstrap.sh L567 改 per-file check（避免 dir 存在就整段 skip seeding 的 idempotency bug）+ 不 clobber 已存在的 shared MEMORY.md（保護 user-promoted 內容）。
+- **Memory promotion: 12 feedback memories shipped to shared layer.** 11 promoted (error-to-optimization / handoff-inbox-atomic-sync / inbox-auto-queue / interactive-decisions / macos-notification-pitfall / planner-executor-race / planner-hot-path / planner-verify-on-inbox-signal / readme-polish-recurring / terse-zh / workflow-split) + 1 deleted (model_split — used pre-existing shared seed) + 7 kept project-local (notification_funk_ok + project_* + env_paths). T-1a end-to-end now in production use.
 - **Renamed: woody-harness → Tandem.** Repo, local directory, GitHub repo, and memory slug all updated. Historical archives (dated prompts, dogfood reports, retros, [0.4.x] CHANGELOG entries) preserved as-is — those record events when the project was named woody-harness. See README + docs/HARNESS_ETHOS.md for narrative context (refreshed in Phase A).
 - Renamed `/resume` slash command to `/brief` to avoid colliding with Claude Code's built-in `/resume` (resume previous conversation). Existing bootstrapped projects: upgrade flow installs `brief.md`; orphan `resume.md` can be manually removed. See `docs/TROUBLESHOOTING.md` "`/brief` slash command not found".
 - README refreshed: Roadmap reflects shipped state (Phase 4 + S-1 + v0.4.1 done; T-1a / 4e queued); "What you get" expanded with all v0.4.1 features (slash commands, statusline, hooks, lifecycle modes, memory portability); added latest-release badge; linked CONTRIBUTING.md.
