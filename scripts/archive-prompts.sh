@@ -16,23 +16,48 @@ detect_and_stage_lesson() {
     local id
     id=$(basename "$archive_file" .md)
 
-    # Skip under dry-run (avoid mutating staging during dry-runs)
-    [ "$DRY_RUN" = 1 ] && return 0
-
-    # Skip if shared dir not yet bootstrapped (some early projects haven't run shared seed)
+    [ "${DRY_RUN:-0}" = 1 ] && return 0
     [ -d "$(dirname "$STAGING")" ] || return 0
 
-    # Idempotency: skip if already in staging
     if [ -f "$STAGING" ] && grep -q "^<!-- BEGIN entry id=$id " "$STAGING"; then
         return 0
     fi
 
-    # Detect signals
-    local has_blocked has_blockers has_fail has_keyword
-    has_blocked=$(grep -m1 -E '^\*\*Status\*\*.*❌' "$archive_file" 2>/dev/null || true)
-    has_blockers=$(grep -m1 -E '^\*\*Blockers\*\*:' "$archive_file" 2>/dev/null | grep -viE 'none|^\*\*Blockers\*\*: *$' || true)
-    has_fail=$(grep -m1 -E '\bFAIL\b' "$archive_file" 2>/dev/null | grep -viE 'PASS|/ FAIL$' || true)
-    has_keyword=$(grep -m1 -iE 'next time|should (have|do|run|abort)|lesson learned' "$archive_file" 2>/dev/null || true)
+    # Extract ## Result block content, skipping fenced code blocks
+    local result_content
+    result_content=$(awk '
+        /^## Result$/ {in_result=1; next}
+        in_result && /^## / {in_result=0}
+        in_result && /^```/ {in_code = !in_code; next}
+        in_result && !in_code {print}
+    ' "$archive_file")
+
+    [ -z "$result_content" ] && return 0
+
+    # Bug 1 fix: Status is "blocked" only when ❌ present and ✅ NOT present on same line
+    local status_line has_blocked=""
+    status_line=$(echo "$result_content" | grep -m1 -E '^\*\*Status\*\*' || true)
+    if [ -n "$status_line" ] && echo "$status_line" | grep -q "❌" && ! echo "$status_line" | grep -q "✅"; then
+        has_blocked="$status_line"
+    fi
+
+    # Bug 3 fix: Blockers must be non-template (none / <description> / empty all skip)
+    local has_blockers=""
+    local blocker_line
+    blocker_line=$(echo "$result_content" | grep -m1 -E '^\*\*Blockers\*\*:' || true)
+    if [ -n "$blocker_line" ] && ! echo "$blocker_line" | grep -qiE 'none|<description>|^\*\*Blockers\*\*: *$'; then
+        has_blockers="$blocker_line"
+    fi
+
+    # Bug 2 fix: FAIL only counts inside Result block, outside code fences, AND not on a "PASS / FAIL" template line
+    local has_fail=""
+    local fail_line
+    fail_line=$(echo "$result_content" | grep -E '\bFAIL\b' | grep -v 'PASS' | head -1 || true)
+    [ -n "$fail_line" ] && has_fail="$fail_line"
+
+    # Keywords (also Result-block-scoped now)
+    local has_keyword=""
+    has_keyword=$(echo "$result_content" | grep -m1 -iE 'next time|should (have|do|run|abort)|lesson learned' || true)
 
     if [ -z "$has_blocked" ] && [ -z "$has_blockers" ] && [ -z "$has_fail" ] && [ -z "$has_keyword" ]; then
         return 0
