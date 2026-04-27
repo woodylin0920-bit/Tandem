@@ -11,6 +11,8 @@ Estimated time: 20-30 minutes on first run, 5 minutes on subsequent projects.
 Install these before starting:
 
 - **`claude` CLI** — install via `npm install -g @anthropic-ai/claude-code` (or the Anthropic docs). Confirm: `claude --version`
+
+> Tandem's instructions use Claude Code as the concrete example throughout this tutorial. The framework itself is markdown-based and works with any model that can read prompts and produce file edits — but the worked walkthrough below assumes Claude Code so commands are copy-pasteable.
 - **`gh` CLI** — install via Homebrew (`brew install gh`) or the GitHub CLI docs. Authenticate: `gh auth login`
 - **bash 4+ or zsh** — macOS ships with zsh by default; bash on Linux is typically 5+. Confirm: `bash --version`
 - **macOS or Linux** — Windows: WSL2 only. Native Windows PowerShell is not supported; `set -euo pipefail` and `sed -i ''` behave differently.
@@ -91,6 +93,8 @@ Memory dir: /Users/you/.claude-work/projects/-Users-you-Desktop-repo-hello-world
 ## Step 3 — Open two Claude Code sessions
 
 You need **two terminal windows**, both with `cd hello-world` (same project root).
+
+> **On the model pairing**: this tutorial uses Opus (planner) + Sonnet (executor) because that's what works for me. Any reasoning-strong/execution-strong pair works. If your preferred pairing is different, swap accordingly — only the model name changes, not the workflow.
 
 **Terminal A — planner (Opus):**
 
