@@ -41,6 +41,7 @@ check_shared_dir() {
 }
 
 shared_pull() {
+    local orig_dir="$PWD"
     cd "$SHARED_DIR"
     if ! git pull --rebase 2>&1; then
         echo ""
@@ -52,23 +53,29 @@ shared_pull() {
         echo "    git add <files>" >&2
         echo "    git rebase --continue" >&2
         echo "  Then re-run: bash scripts/memory.sh sync" >&2
+        cd "$orig_dir"
         exit 1
     fi
+    cd "$orig_dir"
 }
 
 shared_push() {
     local commit_msg="$1"
+    local orig_dir="$PWD"
     cd "$SHARED_DIR"
     git add -A
     if git diff --cached --quiet; then
+        cd "$orig_dir"
         return 0
     fi
     git commit -m "$commit_msg"
     if ! git push 2>&1; then
         echo "error: git push to shared remote failed" >&2
         echo "  Check: cd $SHARED_DIR && git push" >&2
+        cd "$orig_dir"
         exit 1
     fi
+    cd "$orig_dir"
 }
 
 cmd="${1:-help}"

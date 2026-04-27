@@ -22,6 +22,7 @@ ensure_staging() {
 
 shared_lessons_push() {
     local slug="$1"
+    local orig_dir="$PWD"
     if [ ! -d "$SHARED_DIR/.git" ]; then
         echo "  WARN: $SHARED_DIR is not a git repo — skipping shared lessons push" >&2
         return 0
@@ -29,14 +30,17 @@ shared_lessons_push() {
     cd "$SHARED_DIR"
     git add -A
     if git diff --cached --quiet; then
+        cd "$orig_dir"
         return 0
     fi
     git commit -m "lesson: $slug"
     if ! git push 2>&1; then
         echo "error: git push to shared remote failed" >&2
         echo "  Check: cd $SHARED_DIR && git push" >&2
+        cd "$orig_dir"
         exit 1
     fi
+    cd "$orig_dir"
 }
 
 count_entries() {
