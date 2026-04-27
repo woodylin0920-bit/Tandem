@@ -62,7 +62,32 @@ bash scripts/memory.sh sync   # marks override + warns
 
 ### Migrating existing project memory to shared
 
-(Coming in T-1a-β round) — `bash scripts/memory.sh promote` will walk through your project memory interactively and let you decide per file: promote to shared / keep local / delete.
+Use the interactive `promote` helper:
+
+```bash
+bash scripts/memory.sh promote
+```
+
+It walks through every real file in your project memory dir and prompts per file:
+
+```
+[3/12] feedback_terse_zh.md
+  name: terse Mandarin updates
+  description: reply in 繁中, 1-2 sentences...
+  type: feedback
+
+Action? [p]romote / [k]eep / [d]elete / [s]kip / [q]uit:
+```
+
+- **`p` promote** — moves the file to `~/.claude-work/_shared/memory/`, adds an entry to shared `MEMORY.md`, and re-syncs the project (the file becomes a symlink in your project dir, available to *every* project that sync's).
+- **`k` keep** — leaves the file as project-local.
+- **`d` delete** — permanent delete (asks for `y` confirmation).
+- **`s` skip** — decide later; the file stays untouched and appears again on next run.
+- **`q` quit** — stops iteration; whatever's been promoted/kept/deleted so far is preserved.
+
+If the shared layer already has a same-named file, `promote` asks: overwrite shared / rename local / cancel.
+
+After running, your project MEMORY.md is updated automatically — promoted entries appear in the `<!-- BEGIN shared -->` section, deleted entries are removed.
 
 ## Safety
 

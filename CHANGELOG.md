@@ -7,6 +7,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 - Shared memory layer at `~/.claude-work/_shared/memory/` — user-level preferences/rules/lessons that apply across all projects (T-1a-α foundation). New `bash scripts/memory.sh sync` subcommand symlinks shared into project memory dir + regenerates `MEMORY.md` as a combined index. `bootstrap.sh` seeds shared on first run; new project memory only contains project-specific files. See [docs/SHARED_MEMORY.md](docs/SHARED_MEMORY.md). Migration tooling for existing projects coming in T-1a-β.
+- `scripts/memory.sh promote` — interactive migration helper for moving existing project memory entries into the shared layer (promote/keep/delete) (T-1a-β; completes the cross-project shared memory feature).
 
 ### Changed
 - Renamed `/resume` slash command to `/brief` to avoid colliding with Claude Code's built-in `/resume` (resume previous conversation). Existing bootstrapped projects: upgrade flow installs `brief.md`; orphan `resume.md` can be manually removed. See `docs/TROUBLESHOOTING.md` "`/brief` slash command not found".

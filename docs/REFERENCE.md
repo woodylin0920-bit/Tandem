@@ -34,6 +34,7 @@ Flat list of every CLI mode, slash command, script, hook, and memory location. F
 | | `bash scripts/memory.sh import <in.tar.gz>` | Untar to memory dir |
 | | `bash scripts/memory.sh list` | List memory files |
 | | `bash scripts/memory.sh sync` | Symlink shared layer into current project + regenerate combined MEMORY.md |
+| | `bash scripts/memory.sh promote` | Interactive helper to migrate project memory entries to shared layer (promote/keep/delete) |
 | `test-bootstrap.sh` | `bash scripts/test-bootstrap.sh` | 32-check regression test on bootstrap output |
 | `smoke.sh` | `bash scripts/smoke.sh` | Real-machine smoke test runner (per docs/SMOKE_TESTING.md) |
 
