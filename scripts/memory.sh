@@ -383,7 +383,11 @@ case "$cmd" in
             mv "$file" "$shared_target"
             remove_from_project_local "$proj_mem/MEMORY.md" "($name)"
             printf -- '- [%s](%s) — %s\n' "${fm_name:-$name}" "$name" "${fm_desc:-}" >> "$SHARED_MEM/MEMORY.md"
-            bash "$script_self" sync >/dev/null 2>&1 || true
+            if ! _sync_err=$(bash "$script_self" sync 2>&1); then
+                echo "[memory] shared sync failed:" >&2
+                echo "$_sync_err" | head -10 >&2
+                echo "[memory] continuing without shared sync" >&2
+            fi
             echo "  → promoted to shared: $name"
             return 0
         }
@@ -514,7 +518,11 @@ case "$cmd" in
                         mv "$file" "$shared_target"
                         remove_from_project_local "$proj_mem/MEMORY.md" "($name)"
                         printf -- '- [%s](%s) — %s\n' "${fm_name:-$name}" "$name" "${fm_desc:-}" >> "$SHARED_MEM/MEMORY.md"
-                        bash "$script_self" sync >/dev/null 2>&1 || true
+                        if ! _sync_err=$(bash "$script_self" sync 2>&1); then
+                echo "[memory] shared sync failed:" >&2
+                echo "$_sync_err" | head -10 >&2
+                echo "[memory] continuing without shared sync" >&2
+            fi
                         echo "  → promoted to shared."
                         n_promoted=$((n_promoted + 1))
                         promoted_names+=("$name")
