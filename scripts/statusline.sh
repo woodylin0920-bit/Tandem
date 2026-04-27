@@ -31,4 +31,14 @@ if [ -n "$latest_archive" ]; then
     esac
 fi
 
-echo "$inbox · $last_commit · last: $result_emoji"
+# Lessons pending (only if shared staging exists)
+lessons_seg=""
+STAGING="$HOME/.claude-work/_shared/lessons-staging.md"
+if [ -f "$STAGING" ]; then
+    n_lessons=$(grep -c '^<!-- BEGIN entry ' "$STAGING" 2>/dev/null || echo 0)
+    if [ "$n_lessons" -gt 0 ]; then
+        lessons_seg=" · 🎓 $n_lessons"
+    fi
+fi
+
+echo "$inbox · $last_commit · last: $result_emoji$lessons_seg"
