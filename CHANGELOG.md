@@ -5,13 +5,27 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-04-28
+
 ### Added
-- `bootstrap.sh --upgrade-existing <path>` — reverse-sync latest framework into existing projects (dry-run by default; `--apply` to write). Pre-flight checks, jq merge for `settings.json`, hash-compare for `docs/prompts/README.md`, never touches `CLAUDE.md` / `RESUME.md` / `.gitignore` / `_inbox.md` / memory dir. See [docs/UPGRADE.md](docs/UPGRADE.md).
-- `bootstrap.sh --remove <path>` — clean extraction (dry-run by default; `--apply` to delete). Reverse-merges `settings.json` to keep user-only permissions/hooks; never touches user content or `~/.claude-work/projects/<slug>/memory/`. See [docs/REMOVE.md](docs/REMOVE.md).
-- `docs/UPGRADE.md`, `docs/REMOVE.md` — usage + behavior reference.
-- `RESUME.md` self-hosting woody-harness's own status (was missing — SessionStart hook silent before)
-- `docs/REFERENCE.md` — flat cheatsheet of every bootstrap mode / slash command / script / hook
-- `scripts/session-briefing.sh` falls back gracefully when `RESUME.md` absent (prints commits + archive Result anyway)
+- `bootstrap.sh --upgrade-existing <path>` — reverse-sync latest framework into existing projects (dry-run by default; `--apply` to write). Pre-flight checks, jq merge for `settings.json`, hash-compare for `docs/prompts/README.md`, never touches `CLAUDE.md` / `RESUME.md` / `.gitignore` / `_inbox.md` / memory dir. See [docs/UPGRADE.md](docs/UPGRADE.md). (S-1)
+- `bootstrap.sh --remove <path>` — clean extraction (dry-run by default; `--apply` to delete). Reverse-merges `settings.json` to keep user-only permissions/hooks; never touches user content or `~/.claude-work/projects/<slug>/memory/`. See [docs/REMOVE.md](docs/REMOVE.md). (S-1)
+- `docs/UPGRADE.md`, `docs/REMOVE.md` — usage + behavior reference. (S-1)
+- `RESUME.md` self-hosting woody-harness's own status (was missing — SessionStart hook silent before). (polish-r5)
+- `docs/REFERENCE.md` — flat cheatsheet of every bootstrap mode / slash command / script / hook. (polish-r5)
+- `scripts/memory.sh` — export / import / list memory dir for portability. (polish-r2)
+- `scripts/test-bootstrap.sh` — 32-check regression test on bootstrap output. (polish-r2)
+- `scripts/statusline.sh` + `.claude/settings.json` `statusLine` — bottom-of-terminal `📥 inbox · last commit · last result emoji`. (polish-r3)
+- `.claude/commands/sync.md` `/sync` slash command — git log + inbox state + latest archive Result. (polish-r3)
+- `scripts/notify-blocked.sh` + `.claude/settings.json` Notification hook — auto Funk + osascript banner when executor stalled. (polish-r4)
+- `docs/retros/2026-04-28-phase-4-polish-and-s-1.md` — first formal retrospective. (this release)
+
+### Changed
+- `scripts/session-briefing.sh` extended — also tails latest archive `## Result` block on session start (polish-r3); falls back gracefully when `RESUME.md` absent, prints commits + archive Result anyway (polish-r5).
+- `bootstrap.sh` copies all new scripts (`memory.sh`, `statusline.sh`, `session-briefing.sh`, `notify-blocked.sh`) and slash commands (`/sync`) into new projects.
+
+### Fixed
+- `templates/prompts/_inbox.md` is now truly empty (1 byte) so fresh bootstrap statusline correctly shows `📥 empty` instead of treating placeholder text as queued work. (polish-r4)
 
 ## [0.4.0] - 2026-04-28
 
