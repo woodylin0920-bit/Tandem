@@ -20,6 +20,10 @@ FRAMEWORK_FILES=(
     ".claude/commands/phase-gate.md|.claude/commands/phase-gate.md"
     ".claude/commands/auto.md|.claude/commands/auto.md"
     ".claude/commands/recommend.md|.claude/commands/recommend.md"
+    "scripts/_paths.sh|scripts/_paths.sh"
+    "scripts/executor-lock.sh|scripts/executor-lock.sh"
+    "scripts/archive-prune.sh|scripts/archive-prune.sh"
+    "scripts/handoff-update.sh|scripts/handoff-update.sh"
     "scripts/archive-prompts.sh|scripts/archive-prompts.sh"
     "scripts/memory.sh|scripts/memory.sh"
     "scripts/shared-init.sh|scripts/shared-init.sh"
@@ -563,6 +567,7 @@ cp "$HARNESS_DIR/templates/prompts/README.md" docs/prompts/README.md
 
 # Copy archive helper
 mkdir -p scripts
+cp "$HARNESS_DIR/scripts/_paths.sh" scripts/_paths.sh
 cp "$HARNESS_DIR/scripts/archive-prompts.sh" scripts/archive-prompts.sh
 cp "$HARNESS_DIR/scripts/memory.sh" scripts/memory.sh
 cp "$HARNESS_DIR/scripts/statusline.sh" scripts/statusline.sh
@@ -571,6 +576,9 @@ cp "$HARNESS_DIR/scripts/notify-blocked.sh" scripts/notify-blocked.sh
 cp "$HARNESS_DIR/scripts/lessons.sh" scripts/lessons.sh
 cp "$HARNESS_DIR/scripts/auto-loop.sh" scripts/auto-loop.sh
 cp "$HARNESS_DIR/scripts/shared-init.sh" scripts/shared-init.sh
+cp "$HARNESS_DIR/scripts/executor-lock.sh" scripts/executor-lock.sh
+cp "$HARNESS_DIR/scripts/archive-prune.sh" scripts/archive-prune.sh
+cp "$HARNESS_DIR/scripts/handoff-update.sh" scripts/handoff-update.sh
 cp "$HARNESS_DIR/.claude/commands/sync.md" .claude/commands/
 cp "$HARNESS_DIR/.claude/commands/auto.md" .claude/commands/
 mkdir -p docs/prompts/_queue
