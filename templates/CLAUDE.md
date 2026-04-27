@@ -12,8 +12,8 @@ When the user's request matches a slash command, invoke it via the Skill tool as
 
 This repo uses **plan / execute session split**:
 
-- **Planning session (terminal Opus 4.7)**: strategy, decisions, prompt authoring. Writes prompts to `docs/prompts/_inbox.md`.
-- **Execution session (Sonnet via `/inbox`)**: commits, pytest, push. Reads `_inbox.md` and executes literally.
+- **Planning session**: strategy, decisions, prompt authoring. Writes prompts to `docs/prompts/_inbox.md`. (My setup: Claude Code with Opus, /effort high. Any reasoning-strong model works — see docs/MODEL_GUIDE.md.)
+- **Execution session (via `/inbox`)**: commits, tests, push. Reads `_inbox.md` and executes literally. (My setup: Claude Code with Sonnet, /effort medium. Any execution-strong model works.)
 
 After execution, the prompt is archived to `docs/prompts/<descriptive-name>.md`.
 

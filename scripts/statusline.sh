@@ -7,8 +7,9 @@ set -e
 root="$(git rev-parse --show-toplevel 2>/dev/null)" || { echo "(not a git repo)"; exit 0; }
 cd "$root"
 
-# Inbox state — file > 5 bytes counts as "queued"
-if [ -s docs/prompts/_inbox.md ] && [ "$(wc -c < docs/prompts/_inbox.md | tr -d ' ')" -gt 5 ]; then
+# Inbox state — strip HTML comments, then check for substantive content
+_inbox_real=$(sed '/<!--/,/-->/d' docs/prompts/_inbox.md 2>/dev/null | tr -d '[:space:]')
+if [ -n "$_inbox_real" ]; then
     title=$(grep -m1 '^# ' docs/prompts/_inbox.md 2>/dev/null | sed 's/^# //' | cut -c1-30)
     inbox="📥 queued: ${title:-?}"
 else
