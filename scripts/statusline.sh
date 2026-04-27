@@ -16,6 +16,15 @@ else
     inbox="📥 empty"
 fi
 
+# Queue depth (_queue/*.md, excluding .gitkeep)
+queue_seg=""
+if [ -d docs/prompts/_queue ]; then
+    n_queue=$(find docs/prompts/_queue -maxdepth 1 -name '*.md' -type f 2>/dev/null | wc -l | tr -d ' ')
+    if [ "$n_queue" -gt 0 ]; then
+        queue_seg=" · 📦 $n_queue"
+    fi
+fi
+
 # Last commit (short SHA + first 35 chars of subject)
 last_commit=$(git log -1 --format='%h %s' 2>/dev/null | cut -c1-44)
 
@@ -41,4 +50,4 @@ if [ -f "$STAGING" ]; then
     fi
 fi
 
-echo "$inbox · $last_commit · last: $result_emoji$lessons_seg"
+echo "$inbox$queue_seg · $last_commit · last: $result_emoji$lessons_seg"
