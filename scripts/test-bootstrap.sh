@@ -2,6 +2,7 @@
 # Smoke test for bootstrap.sh — verify a fresh bootstrap produces a working project.
 # Run from harness repo root: bash scripts/test-bootstrap.sh
 # Exits 0 on pass, 1 on any failure. Cleans up test project + memory dir on exit.
+# 36 assertions total.
 set -euo pipefail
 
 HARNESS_DIR="$(cd "$(dirname "$0")/.." && pwd)"
@@ -54,6 +55,8 @@ assert "scripts/memory.sh exists"          test -f scripts/memory.sh
 assert "scripts/statusline.sh exists"      test -f scripts/statusline.sh
 assert "scripts/session-briefing.sh exists" test -f scripts/session-briefing.sh
 assert "scripts/notify-blocked.sh exists"  test -f scripts/notify-blocked.sh
+assert "scripts/lessons.sh exists"         test -f scripts/lessons.sh
+assert "scripts/lessons.sh executable"     test -x scripts/lessons.sh
 
 echo ""
 echo "=== Substitution ==="
@@ -91,6 +94,8 @@ echo "=== Scripts runnable ==="
 assert "archive-prompts.sh --dry-run runs" "bash scripts/archive-prompts.sh --dry-run"
 assert "memory.sh list runs"               "bash scripts/memory.sh list"
 assert "statusline.sh outputs non-empty"   "bash scripts/statusline.sh | grep -q ."
+assert "lessons.sh count runs"             "bash scripts/lessons.sh count >/dev/null"
+assert "lessons.sh help runs"              "bash scripts/lessons.sh help >/dev/null"
 
 echo ""
 echo "================================"
