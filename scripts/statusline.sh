@@ -6,6 +6,8 @@ set -e
 
 root="$(git rev-parse --show-toplevel 2>/dev/null)" || { echo "(not a git repo)"; exit 0; }
 cd "$root"
+# shellcheck source=scripts/_paths.sh
+source "$root/scripts/_paths.sh"
 
 # Inbox state — strip HTML comments, then check for substantive content
 _inbox_real=$(sed '/<!--/,/-->/d' docs/prompts/_inbox.md 2>/dev/null | tr -d '[:space:]')
@@ -42,7 +44,7 @@ fi
 
 # Lessons pending (only if shared staging exists)
 lessons_seg=""
-STAGING="$HOME/.claude-work/_shared/lessons-staging.md"
+STAGING="$TANDEM_LESSONS_STAGING"
 if [ -f "$STAGING" ]; then
     n_lessons=$(grep -c '^<!-- BEGIN entry ' "$STAGING" 2>/dev/null || echo 0)
     if [ "$n_lessons" -gt 0 ]; then

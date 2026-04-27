@@ -7,8 +7,10 @@ DRY_RUN=0
 [ "${1:-}" = "--dry-run" ] && DRY_RUN=1
 
 cd "$(git rev-parse --show-toplevel)" || { echo "not in a git repo" >&2; exit 1; }
+# shellcheck source=scripts/_paths.sh
+source "$(dirname "$0")/_paths.sh"
 
-STAGING="$HOME/.claude-work/_shared/lessons-staging.md"
+STAGING="$TANDEM_LESSONS_STAGING"
 
 # Detect lesson signals from an archive file. If detected, append raw entry to staging (idempotent by archive id).
 detect_and_stage_lesson() {

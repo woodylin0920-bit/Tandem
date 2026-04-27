@@ -7,11 +7,13 @@
 #   bash scripts/lessons.sh extract           # raw → candidate via headless claude
 #   bash scripts/lessons.sh review            # candidate → promoted (shared memory) / deleted (interactive)
 set -euo pipefail
+# shellcheck source=scripts/_paths.sh
+source "$(dirname "$0")/_paths.sh"
 
-SHARED_DIR="$HOME/.claude-work/shared"
-STAGING="$HOME/.claude-work/shared/lessons-staging.md"
-SHARED_MEM="$HOME/.claude-work/shared/memory"
-SHARED_LESSONS="$HOME/.claude-work/shared/lessons"
+SHARED_DIR="$TANDEM_SHARED_DIR"
+STAGING="$TANDEM_LESSONS_STAGING"
+SHARED_MEM="$TANDEM_SHARED_DIR/memory"
+SHARED_LESSONS="$TANDEM_SHARED_DIR/lessons"
 
 cmd="${1:-help}"
 
@@ -147,7 +149,7 @@ Subcommands:
   extract           refine raw entries into candidates via headless claude
   review            interactive promote/delete on candidates (default = shared)
 
-Staging: ~/.claude-work/_shared/lessons-staging.md
+Staging: \$TANDEM_LESSONS_STAGING (default: ~/.claude-work/_shared/lessons-staging.md)
 HELP
         ;;
     count)
