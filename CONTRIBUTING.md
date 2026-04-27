@@ -2,7 +2,7 @@
 
 ## This is a personal framework — but PRs are welcome
 
-Tandem was extracted from one person's workflow. The bias is toward solo Claude Code users building AI-augmented projects. That context shapes every design decision here.
+Tandem was extracted from one person's workflow. The bias is toward solo engineers using AI-assisted dev tooling. That context shapes every design decision here.
 
 PRs are welcome for:
 - Bug fixes in `bootstrap.sh` or slash commands
@@ -11,7 +11,7 @@ PRs are welcome for:
 - Troubleshooting entries from gotchas you hit that aren't in `docs/TROUBLESHOOTING.md`
 
 PRs are less welcome for:
-- Expanding scope beyond "one person + Claude Code"
+- Expanding scope beyond "one engineer + their AI of choice"
 - Adding dependencies (see below)
 - Adding new languages or runtimes to the bootstrap
 
