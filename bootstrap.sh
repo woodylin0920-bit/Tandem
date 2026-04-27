@@ -211,7 +211,9 @@ upgrade_existing() {
             short_s=$(echo "$s" | sed "s|$HOME|~|")
             short_d=$(echo "$d" | sed "s|$HOME|~|")
             echo "  $rel"
-            echo "    → diff: diff $short_d $short_s"
+            echo "    → target:   $short_d"
+            echo "    → upstream: $short_s"
+            echo "    → diff: diff <target> <upstream>  (substitute the paths above)"
         done
         echo ""
     fi
@@ -413,7 +415,9 @@ remove_harness() {
             short_s=$(echo "$s" | sed "s|$HOME|~|")
             short_d=$(echo "$d" | sed "s|$HOME|~|")
             echo "  $rel   [hash differs from framework, kept as-is]"
-            echo "    → diff: diff $short_d $short_s"
+            echo "    → target:   $short_d"
+            echo "    → upstream: $short_s"
+            echo "    → diff: diff <target> <upstream>  (substitute the paths above)"
         done
         echo ""
     fi
