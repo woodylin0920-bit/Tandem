@@ -78,6 +78,36 @@ shared_push() {
     cd "$orig_dir"
 }
 
+_validate_shared_files() {
+    local dir="$1"
+    local ok=1
+    local shared_root
+    shared_root=$(realpath "$SHARED_DIR")
+
+    for f in "$dir"/*.md; do
+        [ -e "$f" ] || continue
+        if [ -L "$f" ]; then
+            echo "[memory] refused symlink: $f" >&2
+            ok=0
+            continue
+        fi
+        real=$(realpath "$f" 2>/dev/null || true)
+        case "$real" in
+            "$shared_root"/*) ;;
+            *)
+                echo "[memory] refused path outside shared dir: $f (resolves to $real)" >&2
+                ok=0
+                ;;
+        esac
+        ext="${f##*.}"
+        if [ "$ext" != "md" ]; then
+            echo "[memory] refused non-.md file: $f" >&2
+            ok=0
+        fi
+    done
+    [ "$ok" -eq 1 ]
+}
+
 cmd="${1:-help}"
 
 case "$cmd" in
@@ -142,6 +172,12 @@ case "$cmd" in
 
         # Pull latest from shared remote
         shared_pull
+
+        # Validate shared files before symlinking
+        if ! _validate_shared_files "$SHARED_MEM"; then
+            echo "error: shared layer contains unsafe files (symlinks or non-.md); aborting sync" >&2
+            exit 1
+        fi
 
         linked=()
         already_linked=()
