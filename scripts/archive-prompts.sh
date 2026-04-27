@@ -26,10 +26,11 @@ detect_and_stage_lesson() {
     # Extract ## Result block content, skipping fenced code blocks
     local result_content
     result_content=$(awk '
+        /^```/ {in_code = !in_code; next}
+        in_code {next}
         /^## Result$/ {in_result=1; next}
         in_result && /^## / {in_result=0}
-        in_result && /^```/ {in_code = !in_code; next}
-        in_result && !in_code {print}
+        in_result {print}
     ' "$archive_file")
 
     [ -z "$result_content" ] && return 0
