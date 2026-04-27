@@ -7,6 +7,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 - Renamed `/resume` slash command to `/brief` to avoid colliding with Claude Code's built-in `/resume` (resume previous conversation). Existing bootstrapped projects: upgrade flow installs `brief.md`; orphan `resume.md` can be manually removed. See `docs/TROUBLESHOOTING.md` "`/brief` slash command not found".
+- README refreshed: Roadmap reflects shipped state (Phase 4 + S-1 + v0.4.1 done; T-1a / 4e queued); "What you get" expanded with all v0.4.1 features (slash commands, statusline, hooks, lifecycle modes, memory portability); added latest-release badge; linked CONTRIBUTING.md.
+- GitHub repo metadata refreshed: description (removed origin-project reference); repository topics added (claude-code, ai-agents, solo-dev, workflow, bash, developer-tools, prompt-engineering, claude-opus, claude-sonnet, bootstrap).
 
 ## [0.4.1] - 2026-04-28
 
