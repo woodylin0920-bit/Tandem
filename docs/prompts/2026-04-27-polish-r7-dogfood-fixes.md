@@ -269,7 +269,7 @@ rm -rf "$TMP" "$HOME/.claude-work/projects/$SLUG"
 **Status**: ✅ shipped
 **Commits**: 2 (incl. archive)
 b9e1134 feat(bootstrap): polish upgrade/remove output (active tense, git status hint, settings count, dirty-tree visibility)
-<archive-sha> chore: archive polish-r7-dogfood-fixes inbox prompt + result
+5b988e3 chore: archive polish-r7-dogfood-fixes inbox prompt + result
 
 **Verification**:
 - bash -n bootstrap.sh: PASS
