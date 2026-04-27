@@ -53,7 +53,7 @@ See `docs/prompts/_inbox.md` for any currently queued task. Empty = no work in f
 - **Phase 1 (2026-04-27)**: bootstrap + inbox + memory templates + WORKFLOW
 - **Phase 2 (2026-04-27)**: codex/safety audit + smoke + phase-gate
 - **Phase 4a (2026-04-28)**: legal/entry — LICENSE, CHANGELOG, README rewrite, ISSUE_TEMPLATE×3, self-host inbox
-- **Phase 4b (2026-04-28)**: onboarding — TUTORIAL, HARNESS_ETHOS, TROUBLESHOOTING, CONTRIBUTING, MEMORY_SYSTEM, /resume slash, SessionStart hook
+- **Phase 4b (2026-04-28)**: onboarding — TUTORIAL, HARNESS_ETHOS, TROUBLESHOOTING, CONTRIBUTING, MEMORY_SYSTEM, /brief slash (originally /resume), SessionStart hook
 - **Phase 4c (2026-04-28)**: examples/hello-cli/ + omni-sense purge
 - **Phase 4d (2026-04-28)**: /inbox feedback loop (Result block + osascript notify)
 - **Phase 4-polish r1-r4 (2026-04-28)**: archive helper / memory.sh / test-bootstrap / statusline / /sync / notify-blocked / empty-inbox fix

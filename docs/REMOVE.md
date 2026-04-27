@@ -61,7 +61,7 @@ Memory dir location (run manually if you want it gone):
 
 Would delete (12 files):
   .claude/commands/inbox.md
-  .claude/commands/resume.md
+  .claude/commands/brief.md
   ...
   docs/prompts/_inbox.md
 

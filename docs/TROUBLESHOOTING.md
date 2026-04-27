@@ -212,19 +212,21 @@ If you bootstrapped before Phase 4b (before commit `feat: SessionStart auto-brie
 
 ---
 
-### `/resume` slash command not found
+### `/brief` slash command not found
 
-**Symptom**: Typing `/resume` in the executor session returns "command not found" or lists available commands without `/resume`.
+**Symptom**: Typing `/brief` in the executor session returns "command not found" or lists available commands without `/brief`.
 
-**Cause**: The project was bootstrapped before Phase 4b, when `resume.md` was not yet in `.claude/commands/`.
+**Cause**: The project was bootstrapped before Phase 4b, when `brief.md` was not yet in `.claude/commands/`.
 
 **Fix**:
 ```bash
 # Copy from the harness
-cp ~/woody-harness/.claude/commands/resume.md .claude/commands/resume.md
-git add .claude/commands/resume.md
-git commit -m "chore: backfill /resume slash command from harness Phase 4b"
+cp ~/woody-harness/.claude/commands/brief.md .claude/commands/brief.md
+git add .claude/commands/brief.md
+git commit -m "chore: backfill /brief slash command from harness Phase 4b"
 ```
+
+> **Note**: This command was renamed from `/resume` to `/brief` in v0.4.2 to avoid colliding with Claude Code's built-in `/resume` (resume previous conversation). If you bootstrapped before v0.4.2, the upgrade flow will install `brief.md`; you can manually `git rm .claude/commands/resume.md` to clean up the old name.
 
 ---
 

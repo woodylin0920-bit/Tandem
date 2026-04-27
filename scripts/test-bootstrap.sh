@@ -43,7 +43,7 @@ assert "RESUME.md exists"                  test -f RESUME.md
 assert ".gitignore exists"                 test -f .gitignore
 assert ".claude/settings.json exists"      test -f .claude/settings.json
 assert ".claude/commands/inbox.md exists"  test -f .claude/commands/inbox.md
-assert ".claude/commands/resume.md exists" test -f .claude/commands/resume.md
+assert ".claude/commands/brief.md exists" test -f .claude/commands/brief.md
 assert ".claude/commands/phase-gate.md exists"  test -f .claude/commands/phase-gate.md
 assert ".claude/commands/codex-audit.md exists" test -f .claude/commands/codex-audit.md
 assert ".claude/commands/sync.md exists"        test -f .claude/commands/sync.md

@@ -53,7 +53,7 @@ Skipped — user-modified (1):
 
 Up-to-date (8):
   .claude/commands/inbox.md
-  .claude/commands/resume.md
+  .claude/commands/brief.md
   ...
 
 Run with --apply to actually write changes.
@@ -71,7 +71,7 @@ git -C /path/to/target commit -m "chore: upgrade woody-harness framework"
 
 ## When to upgrade
 
-- New slash commands shipped (`/sync`, `/resume`, etc.)
+- New slash commands shipped (`/sync`, `/brief`, etc.)
 - Hook config changed (e.g., new `Notification` hook for blocked-executor alerts)
 - Statusline / session-briefing scripts updated
 - Memory templates added (manual: copy from `templates/memory/` if you want them)

@@ -55,7 +55,7 @@ hello-world/
 ├── .claude/
 │   ├── commands/
 │   │   ├── inbox.md               # /inbox slash command
-│   │   ├── resume.md              # /resume slash command
+│   │   ├── brief.md               # /brief slash command
 │   │   ├── phase-gate.md          # /phase-gate slash command
 │   │   └── codex-audit.md         # /codex-audit slash command
 │   └── settings.json              # SessionStart hook for auto-briefing
@@ -293,6 +293,6 @@ For the philosophy behind these choices, read `docs/HARNESS_ETHOS.md`.
 - Read `docs/WORKFLOW.md` for the full two-session diagram and rules of thumb.
 - Skim `docs/FUTURE.md` for deferred ideas (CI hooks, multi-worker dashboard, etc.) — don't implement these unless you need them.
 - If anything broke or felt wrong during this tutorial, open an issue using the bug template: [github.com/woodylin0920-bit/woody-harness/issues](https://github.com/woodylin0920-bit/woody-harness/issues). Include `git log --oneline -5` and `bash --version`.
-- Once your project has a few phases shipped, try `/resume` in your executor session for a quick "where are we" briefing.
+- Once your project has a few phases shipped, try `/brief` in your executor session for a quick "where are we" briefing.
 - For memory system details (what gets auto-loaded, what each template means), read `docs/MEMORY_SYSTEM.md`.
 - See [`examples/hello-cli/`](../examples/hello-cli/) for a worked snapshot of a project that just shipped Phase 1 — read `WALKTHROUGH.md` for the narrative.

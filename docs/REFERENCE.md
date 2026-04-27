@@ -17,7 +17,7 @@ Flat list of every CLI mode, slash command, script, hook, and memory location. F
 | Command | Purpose |
 |---|---|
 | `/inbox` | Run `docs/prompts/_inbox.md`, append Result block, archive, notify (Glass on success, Mei-Jia "卡住了" on fail) |
-| `/resume` | Print RESUME.md head + recent commits + handoff memory |
+| `/brief` | Print RESUME.md head + recent commits + handoff memory |
 | `/sync` | Print git log + inbox state + latest archive Result block |
 | `/codex-audit` | Run codex review per `docs/CODEX_AUDIT.md` template |
 | `/phase-gate` | Run pytest + benchmark + emit verdict |

@@ -14,7 +14,7 @@ HARNESS_DIR="$(cd "$(dirname "$0")" && pwd)"
 # -----------------------------------------------------------------------------
 FRAMEWORK_FILES=(
     ".claude/commands/inbox.md|.claude/commands/inbox.md"
-    ".claude/commands/resume.md|.claude/commands/resume.md"
+    ".claude/commands/brief.md|.claude/commands/brief.md"
     ".claude/commands/sync.md|.claude/commands/sync.md"
     ".claude/commands/codex-audit.md|.claude/commands/codex-audit.md"
     ".claude/commands/phase-gate.md|.claude/commands/phase-gate.md"
@@ -478,7 +478,7 @@ cd "$PROJECT_DIR"
 mkdir -p .claude/commands docs/prompts
 # Copy all slash commands + settings
 cp "$HARNESS_DIR/.claude/commands/inbox.md" .claude/commands/
-cp "$HARNESS_DIR/.claude/commands/resume.md" .claude/commands/
+cp "$HARNESS_DIR/.claude/commands/brief.md" .claude/commands/
 cp "$HARNESS_DIR/.claude/commands/phase-gate.md" .claude/commands/
 cp "$HARNESS_DIR/.claude/commands/codex-audit.md" .claude/commands/
 cp "$HARNESS_DIR/.claude/settings.json" .claude/settings.json

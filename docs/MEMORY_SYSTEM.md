@@ -135,6 +135,6 @@ After Phase 4b, bootstrapped projects include a SessionStart hook in `.claude/se
 }
 ```
 
-For an on-demand briefing (without opening a new session), type `/resume` in any Claude Code session. It synthesizes `RESUME.md`, recent commits, and the latest `project_current_handoff` memory into a 5-8 line bullet summary.
+For an on-demand briefing (without opening a new session), type `/brief` in any Claude Code session. It synthesizes `RESUME.md`, recent commits, and the latest `project_current_handoff` memory into a 5-8 line bullet summary.
 
-See `.claude/commands/resume.md` for the full command spec.
+See `.claude/commands/brief.md` for the full command spec.
