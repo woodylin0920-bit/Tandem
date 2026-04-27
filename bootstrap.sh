@@ -558,18 +558,48 @@ sed -i '' "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" CLAUDE.md RESUME.md 2>/dev/null |
 # Setup memory directory
 SLUG=$(echo "$PROJECT_DIR" | sed 's|/|-|g')
 MEM_DIR="$HOME/.claude-work/projects/$SLUG/memory"
-mkdir -p "$MEM_DIR"
-cp "$HARNESS_DIR/templates/memory/MEMORY.md" "$MEM_DIR/MEMORY.md"
-cp "$HARNESS_DIR/templates/memory/feedback_terse_zh.md" "$MEM_DIR/"
-cp "$HARNESS_DIR/templates/memory/feedback_workflow_split.md" "$MEM_DIR/"
-cp "$HARNESS_DIR/templates/memory/feedback_model_split.md" "$MEM_DIR/"
-cp "$HARNESS_DIR/templates/memory/env_paths.md" "$MEM_DIR/"
+SHARED_MEM="$HOME/.claude-work/_shared/memory"
 
-# Substitute project name placeholder in memory files
+SHARED_SEEDS=(feedback_terse_zh.md feedback_workflow_split.md feedback_model_split.md)
+PROJECT_SEEDS=(env_paths.md)
+
+# 1. First bootstrap: seed _shared/ (skip if already exists)
+if [ ! -d "$SHARED_MEM" ]; then
+    mkdir -p "$SHARED_MEM"
+    for f in "${SHARED_SEEDS[@]}"; do
+        cp "$HARNESS_DIR/templates/memory/$f" "$SHARED_MEM/"
+    done
+    cat > "$SHARED_MEM/MEMORY.md" <<'EOF'
+- [terse Mandarin updates](feedback_terse_zh.md) — reply in 繁中, 1-2 sentences, mid-task pings = status check not stop
+- [planning-here, execute-elsewhere workflow](feedback_workflow_split.md) — this window plans + writes prompts; user runs them via /inbox in separate Sonnet session.
+- [model split: Opus plans, Sonnet executes](feedback_model_split.md) — terminal=Opus 4.7 (planning), terminal=Sonnet (executor). Make execution prompts very explicit.
+EOF
+    echo "[bootstrap] Seeded shared memory at $SHARED_MEM (first time)"
+fi
+
+# 2. Project memory dir: only project-specific files
+mkdir -p "$MEM_DIR"
+for f in "${PROJECT_SEEDS[@]}"; do
+    cp "$HARNESS_DIR/templates/memory/$f" "$MEM_DIR/"
+done
 sed -i '' "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" "$MEM_DIR"/env_paths.md 2>/dev/null || true
+
+# 3. Initial project MEMORY.md with markers + project-local seed entry
+cat > "$MEM_DIR/MEMORY.md" <<'EOF'
+<!-- BEGIN shared (auto-managed by scripts/memory.sh sync — do not edit between markers) -->
+<!-- END shared -->
+
+<!-- BEGIN project-local (you can edit this section freely) -->
+- [environment paths](env_paths.md) — bash + markdown only (no venv); macOS BSD sed quirks
+<!-- END project-local -->
+EOF
 
 # git init
 git init -q
+
+# 4. Sync shared layer into project memory (needs git to be initialized)
+bash scripts/memory.sh sync >/dev/null 2>&1 || echo "[bootstrap] WARN: memory sync failed (run 'bash scripts/memory.sh sync' manually)"
+
 git add .
 git commit -q -m "chore: bootstrap from woody-harness"
 

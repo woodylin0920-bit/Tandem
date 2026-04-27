@@ -9,11 +9,20 @@
 set -euo pipefail
 
 memory_dir_for_repo() {
-    local repo_root
-    repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || { echo "not in a git repo" >&2; return 1; }
-    local slug
-    slug=$(echo "$repo_root" | sed 's|/|-|g')
-    echo "$HOME/.claude-work/projects/$slug/memory"
+    # Walk $PWD (not git rev-parse) to preserve the user-facing path and match slugs
+    # computed by bootstrap.sh, avoiding canonical-path divergence on macOS (/tmp→/private/tmp).
+    local dir="$PWD"
+    while [ "$dir" != "/" ]; do
+        if [ -d "$dir/.git" ] || [ -f "$dir/.git" ]; then
+            local slug
+            slug=$(echo "$dir" | sed 's|/|-|g')
+            echo "$HOME/.claude-work/projects/$slug/memory"
+            return 0
+        fi
+        dir=$(dirname "$dir")
+    done
+    echo "not in a git repo" >&2
+    return 1
 }
 
 cmd="${1:-help}"
