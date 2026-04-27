@@ -90,9 +90,9 @@ Stack：{{STACK_LIST}}
 | PROJECT_DESCRIPTION_1_SENTENCE | 範例 CLI 工具（greeting） |
 | COMMIT_SHA | 80bea85 |
 | TEST_COUNT | 62 |
-| STACK_LIST | YOLOv26s + RapidOCR + Gemma 3 1B + mlx-whisper + macOS say |
-| TRIGGER_FLOW | CLI args → bash script → stdout greeting |
-| FILE_LIST | hello.sh, tests/test_hello.sh |
+| STACK_LIST | Python + FastAPI + PostgreSQL |
+| TRIGGER_FLOW | HTTP request → handler → DB write → response |
+| FILE_LIST | src/api.py, src/models.py |
 | TARGET_USER_DESCRIPTION | CLI 使用者 |
 
 ## Verdict 對應動作
