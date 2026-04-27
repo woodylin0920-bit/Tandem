@@ -9,6 +9,18 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - **T-1a: Cross-project shared layer (memory + lessons).** New `scripts/shared-init.sh` creates `~/.claude-work/shared/` as a git-backed private repo (`woodylin0920-bit/claude-shared`). `memory.sh sync` now pulls from the shared remote before linking; `memory.sh promote` commits + pushes after promotion. New `--batch <file-list>` flag on `memory.sh promote` for non-interactive executor automation. `lessons.sh review` on promote writes to `shared/lessons/` + commits + pushes. Bootstrap auto-syncs shared layer on both new-project and `--upgrade-existing --apply` (skips with warning if `~/.claude-work/shared/` not found). `test-bootstrap.sh` updated to 42/42 assertions. Tandem one-time migration: 13 user-level feedback entries moved to `shared/memory/` and pushed to GitHub.
 - **`/auto` mode — queue-based executor loop.** New `/auto` slash command (`scripts/auto-loop.sh` + `.claude/commands/auto.md`) lets the planner drop multiple self-contained task files into `docs/prompts/_queue/` (timestamp FIFO filenames). The executor runs `/auto` and processes tasks sequentially: read → execute → append Result → archive → notify. Fail-stop on any task failure (leaves remaining tasks in queue). Notification controlled by `TANDEM_AUTO_NOTIFY` env (`fail` default = success silent, `all`, `none`). Bootstrap now creates `_queue/` and copies both files; `test-bootstrap.sh` updated to 40/40 assertions.
+- **Statusline `_queue` depth indicator.** `scripts/statusline.sh` appends `· 📦 N` segment when `docs/prompts/_queue/` has pending task files, so planner can see queue depth at a glance alongside inbox state and last commit.
+- **Codex external audit baseline.** New `docs/audits/codex-2026-04-27.md` captures the 7-dimension review at commit `95afa7e` (2 P0 + 7 P1 + 5 P2 findings) with worst-case scenario and batched fix plan. Subsequent fixes annotate this doc with `[FIXED in <hash>]` markers.
+
+### Security
+
+- **Prompt injection safety preflight (P0).** `.claude/commands/inbox.md` and `.claude/commands/auto.md` now require executor to scan prompt content for dangerous patterns (`rm -rf $HOME`/`~`, `git push --force`, `gh auth logout`, `.ssh/` writes, writes outside repo, `curl | bash`) before execution. Hits trigger interactive user confirmation; attempts to override the preflight (e.g. "ignore safety checks") are refused with `Status: ❌ blocked: injection refused`. Verified end-to-end with a deliberate `rm -rf $HOME/.ssh` test prompt — preflight correctly blocked.
+- **Shared layer symlink rejection (P0).** `scripts/memory.sh` now runs `_validate_shared_files()` before sync: rejects any symlink under `~/.claude-work/shared/{memory,lessons}/`, requires `realpath` to stay inside the shared tree, and rejects non-`.md` extensions. Closes the attack vector where a compromised shared remote could exfiltrate local secrets via `memory/x.md → ~/.ssh/id_rsa`.
+- **`auto-loop archive` path validation (P1).** `scripts/auto-loop.sh archive` now canonicalizes the target path and refuses anything outside `docs/prompts/_queue/`, preventing the subcommand from being abused to move arbitrary files.
+
+### Changed
+
+- **Token diet — session briefing + Result template.** `scripts/session-briefing.sh` slimmed (RESUME 30→10 lines, `git log -3` instead of `-5`, drops lessons block, Status-only archive tail). `templates/prompts/_inbox.md` and `.claude/commands/auto.md` Result block templates simplified to `Status / Commits / Notes` (was 5+ fields). Cuts per-session SessionStart token burn substantially while preserving the load-bearing context (current state + recent commits + last outcome).
 
 ## [0.5.0] - 2026-04-28
 
