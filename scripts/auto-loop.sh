@@ -5,22 +5,27 @@
 #   archive <path>                → move task file to _archive/YYYY-MM/
 #   notify <success|fail> <name>  → notify per TANDEM_AUTO_NOTIFY env (default: fail)
 #   status                        → print queue state
+#   recover                       → warn about stale .running/ files from interrupted sessions
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)" || { echo "not in a git repo" >&2; exit 1; }
 
 QUEUE_DIR="docs/prompts/_queue"
+RUNNING_DIR="$QUEUE_DIR/.running"
 ARCHIVE_ROOT="docs/prompts/_archive"
 
 cmd="${1:-status}"
 
 case "$cmd" in
   next)
-    mkdir -p "$QUEUE_DIR"
+    mkdir -p "$RUNNING_DIR"
     file=$(ls "$QUEUE_DIR"/*.md 2>/dev/null | sort | head -1 || true)
     if [ -z "$file" ]; then
       exit 1
     fi
-    echo "$file"
+    slug=$(basename "$file")
+    # atomic claim: mv is same-filesystem so it's atomic on Linux/macOS
+    mv "$file" "$RUNNING_DIR/$slug" 2>/dev/null || exit 1  # race lost → treat as empty
+    echo "$RUNNING_DIR/$slug"
     ;;
 
   archive)
@@ -43,7 +48,11 @@ case "$cmd" in
     fi
     target_dir="$ARCHIVE_ROOT/$yyyymm"
     mkdir -p "$target_dir"
-    git mv "$path" "$target_dir/$base" 2>/dev/null || mv "$path" "$target_dir/$base"
+    # Files from .running/ are gitignored (untracked), so git mv will fail; fall back to mv + add
+    git mv "$path" "$target_dir/$base" 2>/dev/null || {
+      mv "$path" "$target_dir/$base"
+      git add "$target_dir/$base"
+    }
     echo "archived: $base → _archive/$yyyymm/"
     ;;
 
@@ -78,8 +87,20 @@ case "$cmd" in
     fi
     ;;
 
+  recover)
+    mkdir -p "$RUNNING_DIR"
+    stale=$(ls "$RUNNING_DIR"/*.md 2>/dev/null || true)
+    if [ -z "$stale" ]; then
+      echo "recover: .running/ is clean"
+    else
+      echo "[auto-loop] WARNING: stale files in .running/ (previous session interrupted):"
+      echo "$stale" | while IFS= read -r f; do echo "  $(basename "$f")"; done
+      echo "Move them back to _queue/ to retry, or archive manually."
+    fi
+    ;;
+
   *)
-    echo "usage: auto-loop.sh <next|archive|notify|status>" >&2
+    echo "usage: auto-loop.sh <next|archive|notify|status|recover>" >&2
     exit 1
     ;;
 esac
