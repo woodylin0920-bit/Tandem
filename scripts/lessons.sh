@@ -76,14 +76,21 @@ ids_with_state() {
 replace_entry() {
     local id="$1"
     local new_content="$2"
-    local tmp
+    local tmp newfile
     tmp=$(mktemp)
-    awk -v id="$id" -v new="$new_content" '
-        $0 ~ "^<!-- BEGIN entry id="id" " {print new; skip=1; next}
+    newfile=$(mktemp)
+    printf '%s\n' "$new_content" > "$newfile"
+    awk -v id="$id" -v newfile="$newfile" '
+        $0 ~ "^<!-- BEGIN entry id="id" " {
+            while ((getline line < newfile) > 0) print line
+            close(newfile)
+            skip=1; next
+        }
         skip && $0 == "<!-- END entry -->" {skip=0; next}
         !skip {print}
     ' "$STAGING" > "$tmp"
     mv "$tmp" "$STAGING"
+    rm -f "$newfile"
 }
 
 # Read a single key without echo (for prompts)
