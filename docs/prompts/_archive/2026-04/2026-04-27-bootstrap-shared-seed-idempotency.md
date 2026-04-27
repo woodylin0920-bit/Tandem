@@ -202,7 +202,7 @@ git push origin main
 **Status**: ✅ shipped
 **Commits**: 2 (incl. archive)
 2e75dc6 fix: bootstrap.sh shared seeding now per-file idempotent
-<archive-sha> chore: archive bootstrap-shared-seed-idempotency inbox prompt + result
+4de8b16 chore: archive bootstrap-shared-seed-idempotency inbox prompt + result
 
 **Cleanup**:
 - placeholder MEMORY.md removed: PASS
