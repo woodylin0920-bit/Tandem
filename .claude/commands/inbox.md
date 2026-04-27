@@ -49,7 +49,8 @@ description: 讀 docs/prompts/_inbox.md 的 prompt 開工，完成後 append Res
       ```
 
    c. 清空 `docs/prompts/_inbox.md` 為單一 newline
-   d. 把 a/b/c 全部納入**最後一個 commit**（subject: `chore: archive <slug> inbox prompt + result`）並 push
+   d. 跑 `bash scripts/handoff-update.sh <archive-file> empty` 更新 handoff memory
+   e. 把 a/b/c/d 的 archive file + handoff memory 全部納入**最後一個 commit**（subject: `chore: archive <slug> inbox prompt + result`）並 push
 
 4. **最後**：透過 Bash tool 觸發 macOS 通知：
 
