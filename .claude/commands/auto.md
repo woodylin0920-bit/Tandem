@@ -65,6 +65,23 @@ description: 讀 docs/prompts/_queue/ 目錄，依時戳順序消化所有 task
 - `osascript` / `say` 非 macOS 環境會失敗 — `auto-loop.sh notify` 已用 `2>/dev/null || true` 包覆。
 - 通知行為由 `TANDEM_AUTO_NOTIFY` env 控制（預設 `fail` = 成功靜音、失敗才響）。
 
+## Interrupt handling
+
+若 user 中斷執行（Ctrl+C / SIGINT / SIGTERM），在當前任務尚未完成時：
+
+1. 在當前 `.running/` 任務檔末尾 append：
+   ```markdown
+   ## Result
+   Status: ⚠️ blocked: interrupted by user
+   Commits: (partial)
+   Notes: 中斷於 <當前步驟描述>
+   ```
+2. 跑 `bash scripts/auto-loop.sh archive <running-path>` 把它歸檔
+3. 跑 `bash scripts/auto-loop.sh notify fail <task-name>` 觸發失敗通知
+4. **不繼續後續任務**
+
+若重新開啟 session 後懷疑有殘檔，先跑 `bash scripts/auto-loop.sh recover` 確認 `.running/` 是否乾淨。
+
 ## Fail-stop 原則
 
 失敗時**不繼續跑後面任務**，避免基於壞狀態累積錯誤。留在 queue 的後續任務等 user 修復後再手動跑 `/auto`。
