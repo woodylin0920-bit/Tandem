@@ -5,6 +5,10 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-04-27
+
+Major release: cross-project shared layer + queue-based `/auto` mode + full external security audit cleared (2 P0 + 10 P1 + 5 P2 all fixed). Self-use ship-ready; broader-distribution ship-ready pending more dogfood.
+
 ### Added
 
 - **T-1a: Cross-project shared layer (memory + lessons).** New `scripts/shared-init.sh` creates `~/.claude-work/shared/` as a git-backed private repo (`woodylin0920-bit/claude-shared`). `memory.sh sync` now pulls from the shared remote before linking; `memory.sh promote` commits + pushes after promotion. New `--batch <file-list>` flag on `memory.sh promote` for non-interactive executor automation. `lessons.sh review` on promote writes to `shared/lessons/` + commits + pushes. Bootstrap auto-syncs shared layer on both new-project and `--upgrade-existing --apply` (skips with warning if `~/.claude-work/shared/` not found). `test-bootstrap.sh` updated to 42/42 assertions. Tandem one-time migration: 13 user-level feedback entries moved to `shared/memory/` and pushed to GitHub.
@@ -17,6 +21,27 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **Prompt injection safety preflight (P0).** `.claude/commands/inbox.md` and `.claude/commands/auto.md` now require executor to scan prompt content for dangerous patterns (`rm -rf $HOME`/`~`, `git push --force`, `gh auth logout`, `.ssh/` writes, writes outside repo, `curl | bash`) before execution. Hits trigger interactive user confirmation; attempts to override the preflight (e.g. "ignore safety checks") are refused with `Status: ❌ blocked: injection refused`. Verified end-to-end with a deliberate `rm -rf $HOME/.ssh` test prompt — preflight correctly blocked.
 - **Shared layer symlink rejection (P0).** `scripts/memory.sh` now runs `_validate_shared_files()` before sync: rejects any symlink under `~/.claude-work/shared/{memory,lessons}/`, requires `realpath` to stay inside the shared tree, and rejects non-`.md` extensions. Closes the attack vector where a compromised shared remote could exfiltrate local secrets via `memory/x.md → ~/.ssh/id_rsa`.
 - **`auto-loop archive` path validation (P1).** `scripts/auto-loop.sh archive` now canonicalizes the target path and refuses anything outside `docs/prompts/_queue/`, preventing the subcommand from being abused to move arbitrary files.
+
+### Reliability & Concurrency (Batches 2-5 from codex audit)
+
+- **Queue atomic locking (P1).** `auto-loop.sh next` uses atomic `mv` to `_queue/.running/` so two executors can't pick the same task. New `recover` subcommand surfaces orphan running tasks from killed sessions.
+- **`/auto` interrupt handling (P1).** Ctrl+C / TERM during a task now archives the partial run with `Status: ⚠️ blocked: interrupted` and leaves remaining queue intact.
+- **Executor mutex (P1).** New `scripts/executor-lock.sh` (mkdir-based for macOS compat) prevents `/auto` and `/inbox` from running simultaneously and double-pushing.
+- **Notification stderr surfacing (P1).** `osascript` / `say` / `afplay` failures now echo `[notify] ... failed` to stderr instead of silent-failing — closes the macOS Script Editor permission silent-fail trap.
+- **Bootstrap shared sync error visibility (P1).** `bootstrap.sh` no longer swallows `memory.sh sync` stderr; failures show 10-line error summary while still letting bootstrap continue.
+- **Path-scoped `git add` in shared layer (P1).** `memory.sh` and `lessons.sh` now whitelist `memory/*.md MEMORY.md` / `lessons/*.md` instead of `git add -A`, so user-touched files in `~/.claude-work/shared/` aren't accidentally committed.
+- **Lessons staging path unified (P1).** New `scripts/_paths.sh` defines `TANDEM_LESSONS_STAGING` + `TANDEM_SHARED_DIR` constants; `archive-prompts.sh`, `statusline.sh`, `lessons.sh` all source it instead of hardcoding paths.
+- **Result format dual detection (P1).** `archive-prompts.sh` matches both `Status:` (legacy) and `**Status**:` (slim template) so old + new archives both get detected correctly.
+- **Statusline stderr cleanup (P1).** Replaced `n_lessons=$(... || echo 0)` with `${n_lessons:-0}` to eliminate `integer expression expected` noise when staging is missing.
+- **`/auto` doc consistency (P1).** Resolved fail-stop and queue-empty notification contradictions in `auto.md`; single canonical spec under `## Stopping conditions`.
+
+### P2 polish
+
+- **Notify cooldown + singleton (P2).** `notify-blocked.sh` skips re-fires within 60s and uses a mkdir-based lock to prevent overlapping `afplay`.
+- **Dynamic shared owner (P2).** `shared-init.sh` resolves GitHub owner via `gh api user --jq .login` (or `TANDEM_SHARED_OWNER` env override) instead of hardcoded `woodylin0920-bit`, unblocking other users.
+- **Archive monthly retention (P2).** New `scripts/archive-prune.sh --keep-months N --dry-run` packs old `_archive/YYYY-MM/` into `_archive/legacy/<YYYY-MM>.tar.gz`. Manual trigger only.
+- **Statusline mtime cache (P2).** Caches output to `~/.claude-work/.statusline-cache` keyed on input mtime sum; subsequent 1Hz invocations skip the full scan when nothing changed.
+- **Handoff auto-update (P2).** New `scripts/handoff-update.sh` invoked by `/inbox` close — keeps `project_current_handoff.md` memory fresh so `/brief` always reflects last round's state.
 
 ### Changed
 

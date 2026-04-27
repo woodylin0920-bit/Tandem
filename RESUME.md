@@ -1,7 +1,7 @@
 # Tandem — RESUME
 
 **What**: Self-use solo-dev workflow harness for Claude Code (planner/executor split via 2 terminals).
-**Version**: 0.4.0 + S-1 (bootstrap --upgrade-existing / --remove modes shipped 2026-04-27)
+**Version**: 0.6.0 (T-1a shared layer + /auto queue mode + full codex audit cleared)
 **Repo**: https://github.com/woodylin0920-bit/Tandem
 
 ## Current focus
