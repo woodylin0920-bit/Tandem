@@ -37,7 +37,7 @@ description: 讀 docs/prompts/_queue/ 目錄，依時戳順序消化所有 task
 在每次迭代：
 
 1. 跑 `bash scripts/auto-loop.sh next` 取下一份任務檔路徑
-2. 若 exit 1（queue 空）→ 印 `auto: queue empty` → 跑 `bash scripts/auto-loop.sh notify success "loop done"` → **結束迴圈**
+2. 若 exit 1（queue 空）→ 印 `auto: queue empty` → **結束迴圈**（queue 空 = 全成功，依 `TANDEM_AUTO_NOTIFY` 決定是否通知；預設 `fail` 模式下靜默結束）
 3. Read 該檔，**完全照其 prompt 內容執行**（commit / verify / 一般 inbox 流程），不要二次推理決策
 4. 完成（或卡住）後，在該檔末尾 append `## Result` 區塊：
 
@@ -60,12 +60,20 @@ description: 讀 docs/prompts/_queue/ 目錄，依時戳順序消化所有 task
 
 然後 push。
 
+## Stopping conditions
+
+| 情況 | 行為 |
+|------|------|
+| `Status: ❌` / verification FAIL / 被 STOP block | archive 當前任務，**立即停迴圈**（fail 通知），剩餘 queue 保留 |
+| `Status: ⚠️ blocked` | 同上 |
+| 空檔 / placeholder（不像 prompt）| archive（`Status: ⚠️ blocked: skipped`），**繼續下一份**（非真實失敗）|
+| queue 空 | 結束迴圈，靜默（`TANDEM_AUTO_NOTIFY=fail` 預設下無通知）|
+
 ## 邊界情況
 
-- `_queue/` 空（只有 `.gitkeep`）：`bash scripts/auto-loop.sh next` 回傳 exit 1 → 直接結束，不通知。
-- 任務內容不像 prompt（空檔或 placeholder）：跳過該檔（archive 它，Result = `❌ failed / skipped`），繼續下一份。
-- `osascript` / `say` 非 macOS 環境會失敗 — `auto-loop.sh notify` 已用 `2>/dev/null || true` 包覆。
-- 通知行為由 `TANDEM_AUTO_NOTIFY` env 控制（預設 `fail` = 成功靜音、失敗才響）。
+- `_queue/` 空（只有 `.gitkeep`）：`bash scripts/auto-loop.sh next` 回傳 exit 1 → 靜默結束。
+- `osascript` / `say` 非 macOS 環境會失敗 — 失敗訊息印到 stderr。
+- 通知行為由 `TANDEM_AUTO_NOTIFY` env 控制（`fail` = 成功靜音、失敗才響；`all` = 全通知；`none` = 全靜默）。
 
 ## Interrupt handling
 
