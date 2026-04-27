@@ -131,6 +131,8 @@ Opus will think through:
 - Commit message convention
 - Whether any tests should accompany it
 
+Before writing the prompt, decide model + effort. In Terminal A, type `/recommend` and describe the task — it reads `docs/MODEL_GUIDE.md` and outputs a copy-paste-ready `## Execution profile` block. Add that block near the top of your inbox prompt.
+
 Key teaching: Opus writes prompts that are **explicit** because Sonnet is literal. Don't assume Sonnet will infer intent — tell it the exact path, exact content, exact commit message. Leave nothing to judgment.
 
 A good planner prompt looks like this:

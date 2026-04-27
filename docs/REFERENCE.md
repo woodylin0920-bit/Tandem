@@ -20,6 +20,7 @@ Flat list of every CLI mode, slash command, script, hook, and memory location. F
 | `/auto` | Consume all tasks in `docs/prompts/_queue/` (FIFO by filename timestamp); fail-stop on any task failure |
 | `/brief` | Print RESUME.md head + recent commits + handoff memory |
 | `/sync` | Print git log + inbox state + latest archive Result block |
+| `/recommend` | Given a task description, output a copy-paste-ready `## Execution profile` block (model + effort + why) using `docs/MODEL_GUIDE.md` heuristics |
 | `/codex-audit` | Run codex review per `docs/CODEX_AUDIT.md` template |
 | `/phase-gate` | Run pytest + benchmark + emit verdict |
 

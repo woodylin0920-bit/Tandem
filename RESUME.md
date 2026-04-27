@@ -6,7 +6,7 @@
 
 ## Current focus
 
-Phase 4 polish + self-host gaps. Recent rounds: r1 (TROUBLESHOOTING), r2 (memory.sh + test-bootstrap), r3 (statusline + /sync), r4 (notify-blocked + empty inbox), r5 (RESUME + REFERENCE + briefing fallback).
+Phase 4 polish + self-host gaps. Recent rounds: r1 (TROUBLESHOOTING), r2 (memory.sh + test-bootstrap), r3 (statusline + /sync), r4 (notify-blocked + empty inbox), r5 (RESUME + REFERENCE + briefing fallback), 4e (/recommend + MODEL_GUIDE + boilerplate slimming).
 
 ## How to use this harness on itself
 
@@ -38,6 +38,7 @@ claude --model sonnet
 | Deferred ideas | `docs/FUTURE.md` |
 | Phase gates / smoke testing | `docs/PHASE_GATING.md`, `docs/SMOKE_TESTING.md` |
 | Codex audit format | `docs/CODEX_AUDIT.md` |
+| Model + effort selection | `docs/MODEL_GUIDE.md`, `/recommend` slash |
 
 ## Memory dir
 
@@ -60,3 +61,4 @@ See `docs/prompts/_inbox.md` for any currently queued task. Empty = no work in f
 - **Phase 4-polish r1-r4 (2026-04-28)**: archive helper / memory.sh / test-bootstrap / statusline / /sync / notify-blocked / empty-inbox fix
 - **S-1 (2026-04-27)**: bootstrap.sh --upgrade-existing + --remove modes
 - **Polish r5 (this round)**: RESUME self-host + REFERENCE + session-briefing fallback
+- **Phase 4e (2026-04-27)**: `/recommend` slash command — reads `docs/MODEL_GUIDE.md` heuristic table, outputs copy-paste `## Execution profile` block; also boilerplate slimming pass on templates (505 → 492 lines)
