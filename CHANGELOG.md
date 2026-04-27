@@ -7,6 +7,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- **T-1a: Cross-project shared layer (memory + lessons).** New `scripts/shared-init.sh` creates `~/.claude-work/shared/` as a git-backed private repo (`woodylin0920-bit/claude-shared`). `memory.sh sync` now pulls from the shared remote before linking; `memory.sh promote` commits + pushes after promotion. New `--batch <file-list>` flag on `memory.sh promote` for non-interactive executor automation. `lessons.sh review` on promote writes to `shared/lessons/` + commits + pushes. Bootstrap auto-syncs shared layer on both new-project and `--upgrade-existing --apply` (skips with warning if `~/.claude-work/shared/` not found). `test-bootstrap.sh` updated to 42/42 assertions. Tandem one-time migration: 13 user-level feedback entries moved to `shared/memory/` and pushed to GitHub.
 - **`/auto` mode — queue-based executor loop.** New `/auto` slash command (`scripts/auto-loop.sh` + `.claude/commands/auto.md`) lets the planner drop multiple self-contained task files into `docs/prompts/_queue/` (timestamp FIFO filenames). The executor runs `/auto` and processes tasks sequentially: read → execute → append Result → archive → notify. Fail-stop on any task failure (leaves remaining tasks in queue). Notification controlled by `TANDEM_AUTO_NOTIFY` env (`fail` default = success silent, `all`, `none`). Bootstrap now creates `_queue/` and copies both files; `test-bootstrap.sh` updated to 40/40 assertions.
 
 ## [0.5.0] - 2026-04-28

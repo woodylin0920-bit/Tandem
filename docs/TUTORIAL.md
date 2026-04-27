@@ -339,4 +339,5 @@ For the philosophy behind these choices, read `docs/HARNESS_ETHOS.md`.
 - If anything broke or felt wrong during this tutorial, open an issue using the bug template: [github.com/woodylin0920-bit/Tandem/issues](https://github.com/woodylin0920-bit/Tandem/issues). Include `git log --oneline -5` and `bash --version`.
 - Once your project has a few phases shipped, try `/brief` in your executor session for a quick "where are we" briefing.
 - For memory system details (what gets auto-loaded, what each template means), read `docs/MEMORY_SYSTEM.md`.
+- To share feedback memories across all your projects, set up the shared layer: `bash scripts/shared-init.sh`. After setup, `memory.sh sync` will pull shared entries and link them into every project automatically. Promote a project-local entry with `memory.sh promote` — it commits and pushes to the private `claude-shared` GitHub repo.
 - See [`examples/hello-cli/`](../examples/hello-cli/) for a worked snapshot of a project that just shipped Phase 1 — read `WALKTHROUGH.md` for the narrative.

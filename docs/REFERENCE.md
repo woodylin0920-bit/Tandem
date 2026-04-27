@@ -32,14 +32,16 @@ Flat list of every CLI mode, slash command, script, hook, and memory location. F
 | `session-briefing.sh` | (auto via SessionStart hook) | Print RESUME head + commits + latest archive Result on session open |
 | `notify-blocked.sh` | (auto via Notification hook) | Funk sound + osascript banner when executor blocked |
 | `archive-prompts.sh` | `bash scripts/archive-prompts.sh` | Move _inbox.md content to `docs/prompts/<phase>.md`, append Result, clear inbox |
+| `shared-init.sh` | `bash scripts/shared-init.sh` | Create `~/.claude-work/shared/` + GitHub private remote `woodylin0920-bit/claude-shared` (idempotent) |
 | `memory.sh` | `bash scripts/memory.sh export <out.tar.gz>` | Tar memory dir for transport |
 | | `bash scripts/memory.sh import <in.tar.gz>` | Untar to memory dir |
 | | `bash scripts/memory.sh list` | List memory files |
-| | `bash scripts/memory.sh sync` | Symlink shared layer into current project + regenerate combined MEMORY.md |
-| | `bash scripts/memory.sh promote` | Interactive helper to migrate project memory entries to shared layer (promote/keep/delete) |
+| | `bash scripts/memory.sh sync` | Pull shared remote, symlink shared layer into current project, regenerate MEMORY.md |
+| | `bash scripts/memory.sh promote` | Interactive: promote project entries to shared layer + push to remote |
+| | `bash scripts/memory.sh promote --batch <f1,f2,...>` | Non-interactive batch promote (for executor automation) |
 | `auto-loop.sh` | `bash scripts/auto-loop.sh <next\|archive\|notify\|status>` | Queue management for `/auto`: FIFO next-task, archive on completion, notify per `TANDEM_AUTO_NOTIFY` env |
 | `lessons.sh` | `bash scripts/lessons.sh count\|list\|extract\|review` | Auto-extracted lesson candidates from inbox archives. See `docs/LESSONS.md`. |
-| `test-bootstrap.sh` | `bash scripts/test-bootstrap.sh` | 40-check regression test on bootstrap output |
+| `test-bootstrap.sh` | `bash scripts/test-bootstrap.sh` | 42-check regression test on bootstrap output |
 | `smoke.sh` | `bash scripts/smoke.sh` | Real-machine smoke test runner (per docs/SMOKE_TESTING.md) |
 
 ## Hooks (`.claude/settings.json`)
@@ -53,12 +55,35 @@ Flat list of every CLI mode, slash command, script, hook, and memory location. F
 
 Set in `.claude/settings.json` `statusLine.command = "bash scripts/statusline.sh"`. Renders at terminal bottom.
 
+## Shared layer
+
+Cross-project shared memory and lessons, backed by a private GitHub repo.
+
+| Path | Description |
+|---|---|
+| `~/.claude-work/shared/` | Local git repo, tracks to `github.com/woodylin0920-bit/claude-shared` |
+| `~/.claude-work/shared/memory/` | Shared feedback + reference memories (auto-linked into each project) |
+| `~/.claude-work/shared/lessons/` | Cross-project lessons promoted from inbox archives |
+| `~/.claude-work/shared/memory/MEMORY.md` | Shared index — sourced into every project's shared section |
+
+**Setup**: `bash scripts/shared-init.sh` (idempotent, creates repo + remote).
+
+**Shared vs project-local**:
+- `feedback_*` and `reference_*` entries that describe *how the user works* → shared
+- `project_*`, `env_paths.md`, anything referencing project-specific code paths → project-local
+
+**Pull/push flow**:
+- `memory.sh sync` — pulls latest shared → re-links → regenerates MEMORY.md
+- `memory.sh promote` — promotes project entries → commits to shared repo → pushes
+- `lessons.sh review` — on [p]romote → writes to `shared/lessons/` + commits + pushes
+
 ## Memory dir
 
 `~/.claude-work/projects/<slug>/memory/`
 
 - `<slug>` = absolute target path with `/` replaced by `-`
-- `MEMORY.md` = index (always loaded into context)
+- `MEMORY.md` = index (always loaded into context); has `<!-- BEGIN shared -->` + `<!-- BEGIN project-local -->` sections
+- Shared files appear as symlinks → `../../../shared/memory/<name>.md`
 - Individual memory files: `<type>_<topic>.md` (types: user / feedback / project / reference)
 
 ## Conventions

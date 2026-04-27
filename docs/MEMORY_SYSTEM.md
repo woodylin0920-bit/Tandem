@@ -67,22 +67,35 @@ Both are needed. Inbox tells Sonnet what to do right now. Memory tells Sonnet ho
 
 ---
 
+## Shared vs project-local
+
+Memory entries fall into two categories:
+
+| Category | What goes here | Storage |
+|---|---|---|
+| **shared** | Feedback about how you work (tone, workflow split, model preferences) — relevant to every project | `~/.claude-work/shared/memory/` (git-backed private repo) |
+| **project-local** | Paths, project history, project-specific decisions | `~/.claude-work/projects/<slug>/memory/` (real files) |
+
+`memory.sh sync` pulls the shared repo → links shared entries as symlinks into your project memory dir → regenerates `MEMORY.md` with a `<!-- BEGIN shared -->` section (auto-managed) and a `<!-- BEGIN project-local -->` section (freely editable).
+
+To promote a project-local entry to shared: `bash scripts/memory.sh promote` (interactive) or `--batch file1.md,file2.md` (executor automation). Promote pushes to the private GitHub remote automatically.
+
+**Rule of thumb**: `feedback_*` and `reference_*` = shared; `project_*`, `env_paths.md` = project-local.
+
 ## What bootstrap.sh ships
 
-When you run `bash bootstrap.sh <project>`, these five files are copied into the memory directory:
+When you run `bash bootstrap.sh <project>`, these files are copied/created in the memory directory:
 
 | File                          | Type     | Purpose                                                        |
 |-------------------------------|----------|----------------------------------------------------------------|
-| `MEMORY.md`                   | index    | One-line pointer per memory file; auto-loaded index           |
-| `feedback_terse_zh.md`        | feedback | Terse 繁中 replies; mid-task pings = status, not stop          |
-| `feedback_workflow_split.md`  | feedback | Planning window plans; execution window executes              |
-| `feedback_model_split.md`     | feedback | Opus plans + writes detailed prompts; Sonnet executes literally |
+| `MEMORY.md`                   | index    | Shared section (auto-managed) + project-local section         |
 | `env_paths.md`                | reference| Venv path, repo path, macOS iCloud trap warning               |
 
-These templates have placeholder values. After bootstrap, localize manually:
+Shared feedback entries (`feedback_terse_zh`, `feedback_workflow_split`, `feedback_model_split`, etc.) are linked via `memory.sh sync` from `~/.claude-work/shared/memory/` — bootstrap auto-syncs if the shared layer exists, otherwise warns.
 
+After bootstrap, localize:
 - `env_paths.md` — fill in your actual venv path and repo path
-- `MEMORY.md` — the index already points to all four files; add new entries here as you create them
+- Run `bash scripts/shared-init.sh` if you haven't set up the shared layer yet
 
 ---
 

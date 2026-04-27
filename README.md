@@ -72,7 +72,7 @@ bootstrapped project after one phase shipped. Browse the files + read
 - [x] **Phase 2** — codex audit + safety audit + smoke test templates
 - [x] **Phase 4** — onboarding (TUTORIAL, HARNESS_ETHOS, TROUBLESHOOTING, MEMORY_SYSTEM, CONTRIBUTING) + `examples/hello-cli/` + feedback loop (statusline, /sync, /brief, notify-blocked) + lifecycle (bootstrap upgrade/remove via S-1)
 - [x] **v0.4.1 release** — polish r2-r5 + S-1 (bootstrap modes) + retro
-- [x] **T-1a** — cross-project shared memory layer (full: α infra + β promote tool + real promotion of 12 feedback memories to shared)
+- [x] **T-1a** — cross-project shared layer (git-backed `~/.claude-work/shared/` + GitHub private remote; `shared-init.sh`; `memory.sh sync/promote` auto pull/push; `lessons.sh review` pushes to shared; bootstrap auto-syncs; 13 Tandem user-level feedback entries migrated)
 - [x] **S-1** — bootstrap upgrade/remove modes
 - [x] **Phase 0** — rename to Tandem (repo + dir + GitHub + memory slug) + follow-up cleanup + bootstrap shared-seed idempotency fix
 - [x] **Phase A** — narrative refactor for model-agnostic positioning (README + HARNESS_ETHOS + ATTRIBUTION + TUTORIAL + WORKFLOW + CONTRIBUTING + examples)

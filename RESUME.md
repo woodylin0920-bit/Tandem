@@ -6,7 +6,7 @@
 
 ## Current focus
 
-Phase 4 polish + self-host gaps. Recent rounds: r1 (TROUBLESHOOTING), r2 (memory.sh + test-bootstrap), r3 (statusline + /sync), r4 (notify-blocked + empty inbox), r5 (RESUME + REFERENCE + briefing fallback), 4e (/recommend + MODEL_GUIDE + boilerplate slimming).
+Phase 4 polish + self-host gaps. Recent rounds: r1 (TROUBLESHOOTING), r2 (memory.sh + test-bootstrap), r3 (statusline + /sync), r4 (notify-blocked + empty inbox), r5 (RESUME + REFERENCE + briefing fallback), 4e (/recommend + MODEL_GUIDE + boilerplate slimming), T-1a (shared layer: memory + lessons cross-project sync via claude-shared private GitHub repo).
 
 ## How to use this harness on itself
 
