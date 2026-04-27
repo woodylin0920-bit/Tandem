@@ -7,6 +7,23 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 (empty — next round adds entries)
 
+## [0.5.0] - 2026-04-28
+
+### Added
+
+- **Phase C: lessons loop — auto-extracted feedback memories from inbox archives.** New `scripts/lessons.sh` (subcommands: count/list/extract/review) plus detection logic in `scripts/archive-prompts.sh`. Whenever an inbox round finishes with `Status: ❌ blocked`, non-empty `Blockers:`, a `FAIL` line in verification, or "next time/should/lesson learned" keyword hits, the archive flow appends a `state=raw` entry to `~/.claude-work/_shared/lessons-staging.md`. `lessons.sh extract` invokes `claude -p` headless to refine raw signals into structured candidates (frontmatter + Why/How-to-apply body); `lessons.sh review` walks each candidate interactively (default action = promote-to-shared). Promoted lessons land in `~/.claude-work/_shared/memory/<slug>.md` with an index row appended. See [docs/LESSONS.md](docs/LESSONS.md). This is the招牌 feature delivering the cross-project self-improving promise: lessons captured in project A become available to project B after promotion.
+- **Phase B: model + effort selection guide.** New `docs/MODEL_GUIDE.md` distills empirical recommendations from 20+ archived inbox rounds — Claude as primary worked example with a principle-extension section for other planner/executor model pairs (reasoning-strong → planner, execution-strong → executor). New convention: every inbox prompt declares a `## Execution profile` block (model + effort + commits) near the top. Soft convention only (no lint), reminded via comment block in `templates/prompts/_inbox.md` and documented in `docs/REFERENCE.md`.
+- **Statusline lessons indicator + briefing block.** Statusline appends `· 🎓 N` when staging is non-empty. SessionStart briefing prints a `=== lessons pending ===` block with raw/candidate breakdown.
+
+### Changed
+
+- **`templates/CLAUDE.md` Workflow section is model-agnostic** (Phase A leftover caught in Phase B). Workflow describes the role (reasoning-strong planner / execution-strong executor) with Claude Code as my-setup example, links `docs/MODEL_GUIDE.md` for selection guidance.
+- **`scripts/test-bootstrap.sh` now asserts 36/36** (was 32/32) — added 4 new assertions for `scripts/lessons.sh` (existence, executable bit, `count` subcommand runs, `help` subcommand runs).
+
+### Notes
+
+- Lessons loop self-validated on this release: Phase C archive run detected lesson signals in past v0.4.2 + Phase B archives (their verification block contained `FAIL` placeholders) and staged 2 raw entries automatically. Feature is end-to-end functional.
+
 ## [0.4.2] - 2026-04-28
 
 ### Added
