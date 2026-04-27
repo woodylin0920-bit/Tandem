@@ -24,6 +24,7 @@ This is the day-to-day flow Tandem is built around. The split is the principle â
 
 1. **Plan** in the planning session: pick next phase, decide tradeoffs, get user input
 2. **Write prompt**: planner writes to `docs/prompts/_inbox.md`, structure:
+   - `## Execution profile` block (model + effort + commits estimate) â€” see `docs/MODEL_GUIDE.md`
    - PRE-FLIGHT block
    - "Do not re-litigate decisions" boilerplate
    - 5-6 atomic commits with inlined code + commit messages

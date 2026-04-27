@@ -64,6 +64,25 @@ Set in `.claude/settings.json` `statusLine.command = "bash scripts/statusline.sh
 - **Archive**: `docs/prompts/<date>-<phase>.md` after completion (via archive-prompts.sh)
 - **Auto-queue**: sequence-bounded — executor must STOP after declared rounds, no auto-chain unless user pre-approves
 
+### Execution profile convention
+
+Every inbox prompt declares model + effort + commits near the top in a `## Execution profile` block. Soft convention (no lint), reminded via comment in `templates/prompts/_inbox.md`. See `docs/MODEL_GUIDE.md`.
+
+## Docs
+
+| File | Purpose |
+|---|---|
+| `docs/MODEL_GUIDE.md` | Heuristic table for picking model + /effort per inbox round, with `## Execution profile` convention. |
+| `docs/TUTORIAL.md` | First-time setup walkthrough |
+| `docs/WORKFLOW.md` | Plan/execute cycle philosophy |
+| `docs/HARNESS_ETHOS.md` | Design principles + cross-vendor gates |
+| `docs/SHARED_MEMORY.md` | Cross-project shared memory layer setup |
+| `docs/UPGRADE.md` | `--upgrade-existing` behavior reference |
+| `docs/REMOVE.md` | `--remove` behavior reference |
+| `docs/TROUBLESHOOTING.md` | Common issues + fixes |
+| `docs/MEMORY_SYSTEM.md` | Memory types + file format |
+| `docs/FUTURE.md` | Deferred ideas (Phase 3) |
+
 ## Source layout
 
 ```
