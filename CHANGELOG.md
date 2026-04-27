@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added
+- `bootstrap.sh --upgrade-existing <path>` — reverse-sync latest framework into existing projects (dry-run by default; `--apply` to write). Pre-flight checks, jq merge for `settings.json`, hash-compare for `docs/prompts/README.md`, never touches `CLAUDE.md` / `RESUME.md` / `.gitignore` / `_inbox.md` / memory dir. See [docs/UPGRADE.md](docs/UPGRADE.md).
+- `bootstrap.sh --remove <path>` — clean extraction (dry-run by default; `--apply` to delete). Reverse-merges `settings.json` to keep user-only permissions/hooks; never touches user content or `~/.claude-work/projects/<slug>/memory/`. See [docs/REMOVE.md](docs/REMOVE.md).
+- `docs/UPGRADE.md`, `docs/REMOVE.md` — usage + behavior reference.
+
 ## [0.4.0] - 2026-04-28
 
 ### Added
