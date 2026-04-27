@@ -17,6 +17,7 @@ Extracted from real-world solo project development: 4 ship-able phases + safety 
 - **Phase-based atomic commits** — every change ship-ready, revertable
 - **Pre-flight checks** — every executor prompt starts with environment verification + final `## Result` block PASS/FAIL
 - **Project lifecycle** — `bash bootstrap.sh --upgrade-existing <path>` syncs framework upgrades into older projects (dry-run by default); `--remove <path>` cleanly extracts the framework while preserving your work + memory (see [docs/UPGRADE.md](docs/UPGRADE.md), [docs/REMOVE.md](docs/REMOVE.md))
+- **Cross-project shared memory** — your preferences, workflow rules, and lessons-learned live once at `~/.claude-work/_shared/memory/` and symlink into every project. Add a memory once, get it everywhere. See [docs/SHARED_MEMORY.md](docs/SHARED_MEMORY.md).
 - **Memory portability** — `bash scripts/memory.sh export/import` to move memory dirs across machines
 
 ## Why woody-harness?
@@ -60,7 +61,7 @@ bootstrapped project after one phase shipped. Browse the files + read
 - [x] **Phase 2** — codex audit + safety audit + smoke test templates
 - [x] **Phase 4** — onboarding (TUTORIAL, HARNESS_ETHOS, TROUBLESHOOTING, MEMORY_SYSTEM, CONTRIBUTING) + `examples/hello-cli/` + feedback loop (statusline, /sync, /brief, notify-blocked) + lifecycle (bootstrap upgrade/remove via S-1)
 - [x] **v0.4.1 release** — polish r2-r5 + S-1 (bootstrap modes) + retro
-- [ ] **T-1a** — cross-project shared memory layer (next major; "Claude gets smarter as you work across projects")
+- [~] **T-1a** — cross-project shared memory layer (α shipped: foundation; β pending: migration tooling)
 - [ ] **4e** — model + effort recommendation system (`MODEL_GUIDE.md` + `/recommend`)
 - ~~Phase 3: CI / hooks / push notifications~~ (deferred — see [docs/FUTURE.md](docs/FUTURE.md))
 
