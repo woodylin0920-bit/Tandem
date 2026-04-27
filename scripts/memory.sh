@@ -5,9 +5,12 @@
 #   bash scripts/memory.sh export                # tarball -> ~/.claude-work/exports/<slug>-memory-<date>.tar.gz
 #   bash scripts/memory.sh import <tarball>      # extracts into the current repo's memory dir (refuses if exists; FORCE=1 to override)
 #   bash scripts/memory.sh list                  # show current repo's memory dir + contents
-#   bash scripts/memory.sh sync                  # symlink shared layer into project memory + regenerate combined MEMORY.md
-#   bash scripts/memory.sh promote               # interactive: move project memory entries to shared layer (promote/keep/delete/skip)
+#   bash scripts/memory.sh sync                  # pull shared, symlink shared layer into project memory, regenerate MEMORY.md
+#   bash scripts/memory.sh promote [--batch <file1,file2,...>]   # promote project memory entries to shared layer (interactive or batch)
 set -euo pipefail
+
+SHARED_DIR="$HOME/.claude-work/shared"
+SHARED_MEM="$SHARED_DIR/memory"
 
 memory_dir_for_repo() {
     # Walk $PWD (not git rev-parse) to preserve the user-facing path and match slugs
@@ -24,6 +27,48 @@ memory_dir_for_repo() {
     done
     echo "not in a git repo" >&2
     return 1
+}
+
+check_shared_dir() {
+    if [ ! -d "$SHARED_DIR" ]; then
+        echo "error: no shared layer at $SHARED_DIR — run 'bash scripts/shared-init.sh' first" >&2
+        exit 1
+    fi
+    if [ ! -d "$SHARED_DIR/.git" ]; then
+        echo "error: $SHARED_DIR exists but is not a git repo — run 'bash scripts/shared-init.sh' to fix" >&2
+        exit 1
+    fi
+}
+
+shared_pull() {
+    cd "$SHARED_DIR"
+    if ! git pull --rebase 2>&1; then
+        echo ""
+        echo "error: git pull --rebase failed in $SHARED_DIR" >&2
+        echo "  There may be a merge conflict. To resolve:" >&2
+        echo "    cd $SHARED_DIR" >&2
+        echo "    git status       # see conflicting files" >&2
+        echo "    # edit files to resolve conflicts" >&2
+        echo "    git add <files>" >&2
+        echo "    git rebase --continue" >&2
+        echo "  Then re-run: bash scripts/memory.sh sync" >&2
+        exit 1
+    fi
+}
+
+shared_push() {
+    local commit_msg="$1"
+    cd "$SHARED_DIR"
+    git add -A
+    if git diff --cached --quiet; then
+        return 0
+    fi
+    git commit -m "$commit_msg"
+    if ! git push 2>&1; then
+        echo "error: git push to shared remote failed" >&2
+        echo "  Check: cd $SHARED_DIR && git push" >&2
+        exit 1
+    fi
 }
 
 cmd="${1:-help}"
@@ -77,24 +122,27 @@ case "$cmd" in
         ;;
     sync)
         proj_mem=$(memory_dir_for_repo) || exit 1
-        shared_mem="$HOME/.claude-work/_shared/memory"
+        check_shared_dir
 
         if [ ! -d "$proj_mem" ]; then
             echo "error: no project memory dir for $(pwd) — run bootstrap.sh first" >&2
             exit 1
         fi
-        if [ ! -d "$shared_mem" ]; then
-            echo "error: no shared layer at $shared_mem — run bootstrap.sh on a new project to seed it, or manually mkdir + populate" >&2
+        if [ ! -d "$SHARED_MEM" ]; then
+            echo "error: no shared memory dir at $SHARED_MEM — run 'bash scripts/shared-init.sh' first" >&2
             exit 1
         fi
+
+        # Pull latest from shared remote
+        shared_pull
 
         linked=()
         already_linked=()
         relinked=()
         overridden=()
-        expected_prefix="../../../_shared/memory"
+        expected_prefix="../../../shared/memory"
 
-        for f in "$shared_mem"/*.md; do
+        for f in "$SHARED_MEM"/*.md; do
             [ -f "$f" ] || continue
             name=$(basename "$f")
             [ "$name" = "MEMORY.md" ] && continue
@@ -121,7 +169,7 @@ case "$cmd" in
         # Regenerate MEMORY.md
         memory_md="$proj_mem/MEMORY.md"
         shared_entries=""
-        [ -f "$shared_mem/MEMORY.md" ] && shared_entries=$(cat "$shared_mem/MEMORY.md") || true
+        [ -f "$SHARED_MEM/MEMORY.md" ] && shared_entries=$(cat "$SHARED_MEM/MEMORY.md") || true
 
         project_local=""
         if [ -f "$memory_md" ]; then
@@ -154,16 +202,16 @@ case "$cmd" in
 
         # Count shared files and entries for summary
         n_shared=0
-        for f in "$shared_mem"/*.md; do
+        for f in "$SHARED_MEM"/*.md; do
             [ -f "$f" ] || continue
             [ "$(basename "$f")" = "MEMORY.md" ] && continue
             n_shared=$((n_shared + 1))
         done
-        n_shared_entries=$(grep -c '^- ' "$shared_mem/MEMORY.md" 2>/dev/null || echo "0")
+        n_shared_entries=$(grep -c '^- ' "$SHARED_MEM/MEMORY.md" 2>/dev/null || echo "0")
 
         proj_root=$(git rev-parse --show-toplevel 2>/dev/null) || proj_root="$(pwd)"
         echo "[sync] Project: $proj_root"
-        echo "[sync] Shared: $shared_mem ($n_shared files)"
+        echo "[sync] Shared:  $SHARED_MEM ($n_shared files)"
         echo ""
 
         n_linked=${#linked[@]}
@@ -205,22 +253,37 @@ case "$cmd" in
         ;;
     promote)
         proj_mem=$(memory_dir_for_repo) || exit 1
-        shared_mem="$HOME/.claude-work/_shared/memory"
+        check_shared_dir
         script_self="$(cd "$(dirname -- "$0")" && pwd)/$(basename -- "$0")"
+
+        # --batch mode: promote a comma-separated list of files non-interactively
+        BATCH_MODE=0
+        BATCH_FILES=()
+        if [ "${2:-}" = "--batch" ]; then
+            BATCH_MODE=1
+            IFS=',' read -ra BATCH_FILES <<< "${3:-}"
+            if [ ${#BATCH_FILES[@]} -eq 0 ]; then
+                echo "usage: bash scripts/memory.sh promote --batch file1.md,file2.md,..." >&2
+                exit 1
+            fi
+        fi
 
         # Pre-flight
         if [ ! -d "$proj_mem" ]; then
             echo "error: no project memory dir for $(pwd) — run bootstrap.sh first" >&2
             exit 1
         fi
-        if [ ! -d "$shared_mem" ]; then
-            echo "error: no shared layer at $shared_mem — run bootstrap.sh on a new project to seed it" >&2
+        if [ ! -d "$SHARED_MEM" ]; then
+            echo "error: no shared memory dir at $SHARED_MEM — run 'bash scripts/shared-init.sh' first" >&2
             exit 1
         fi
         if [ ! -f "$proj_mem/MEMORY.md" ] || ! grep -q "<!-- BEGIN project-local" "$proj_mem/MEMORY.md"; then
-            echo "error: project MEMORY.md missing T-1a-α markers — run 'bash scripts/memory.sh sync' first" >&2
+            echo "error: project MEMORY.md missing T-1a markers — run 'bash scripts/memory.sh sync' first" >&2
             exit 1
         fi
+
+        # Pull latest before promoting
+        shared_pull
 
         # Parse one frontmatter field from a file
         parse_field() {
@@ -230,7 +293,7 @@ case "$cmd" in
             ' "$2"
         }
 
-        # Read a single meaningful character, skipping newlines (works with both tty and piped stdin)
+        # Read a single meaningful character, skipping newlines
         read_key() {
             local ans rc
             while true; do
@@ -259,6 +322,66 @@ case "$cmd" in
             mv "$tmp" "$memory_md"
         }
 
+        # Promote a single file to shared (used by both interactive and batch modes)
+        # Returns 0 on success, 1 on skip/conflict-cancel
+        promote_file() {
+            local file="$1" name fm_name fm_desc
+            name=$(basename "$file")
+            fm_name=$(parse_field name "$file")
+            fm_desc=$(parse_field description "$file")
+
+            local shared_target="$SHARED_MEM/$name"
+
+            if [ -e "$shared_target" ]; then
+                echo "  ⚠️  shared already has '$name' — skipping (use interactive mode to overwrite/rename)" >&2
+                return 1
+            fi
+
+            mv "$file" "$shared_target"
+            remove_from_project_local "$proj_mem/MEMORY.md" "($name)"
+            printf -- '- [%s](%s) — %s\n' "${fm_name:-$name}" "$name" "${fm_desc:-}" >> "$SHARED_MEM/MEMORY.md"
+            bash "$script_self" sync >/dev/null 2>&1 || true
+            echo "  → promoted to shared: $name"
+            return 0
+        }
+
+        if [ "$BATCH_MODE" -eq 1 ]; then
+            n_promoted=0
+            n_skipped=0
+            project_slug=$(basename "$(dirname "$proj_mem")")
+
+            for bname in "${BATCH_FILES[@]}"; do
+                bname=$(echo "$bname" | tr -d ' ')
+                [ -z "$bname" ] && continue
+                file="$proj_mem/$bname"
+                if [ ! -f "$file" ]; then
+                    echo "  skip: $bname (not found in project memory dir)"
+                    n_skipped=$((n_skipped + 1))
+                    continue
+                fi
+                if [ -L "$file" ]; then
+                    echo "  skip: $bname (already a symlink — already in shared or already promoted)"
+                    n_skipped=$((n_skipped + 1))
+                    continue
+                fi
+                if promote_file "$file"; then
+                    n_promoted=$((n_promoted + 1))
+                else
+                    n_skipped=$((n_skipped + 1))
+                fi
+            done
+
+            echo ""
+            echo "=== Batch promote summary ==="
+            printf 'Promoted: %d  Skipped: %d\n' "$n_promoted" "$n_skipped"
+
+            if [ "$n_promoted" -gt 0 ]; then
+                shared_push "promote: batch from $project_slug"
+            fi
+            exit 0
+        fi
+
+        # Interactive mode
         # Collect real files (non-symlink, non-MEMORY.md)
         files=()
         for f in "$proj_mem"/*.md; do
@@ -280,7 +403,9 @@ case "$cmd" in
 
         total=${#files[@]}
         n_promoted=0; n_kept=0; n_deleted=0; n_skipped=0
+        promoted_names=()
         i=0
+        project_slug=$(basename "$(dirname "$proj_mem")")
 
         for file in "${files[@]}"; do
             i=$((i + 1))
@@ -308,7 +433,7 @@ case "$cmd" in
 
                 case "$ans" in
                     p|P)
-                        shared_target="$shared_mem/$name"
+                        shared_target="$SHARED_MEM/$name"
                         conflict=0
                         [ -e "$shared_target" ] && conflict=1
 
@@ -331,7 +456,7 @@ case "$cmd" in
                                         mv "$file" "$proj_mem/$new_name"
                                         file="$proj_mem/$new_name"
                                         name="$new_name"
-                                        shared_target="$shared_mem/$name"
+                                        shared_target="$SHARED_MEM/$name"
                                         break
                                         ;;
                                     c|C)
@@ -345,10 +470,11 @@ case "$cmd" in
 
                         mv "$file" "$shared_target"
                         remove_from_project_local "$proj_mem/MEMORY.md" "($name)"
-                        printf -- '- [%s](%s) — %s\n' "${fm_name:-$name}" "$name" "${fm_desc:-}" >> "$shared_mem/MEMORY.md"
+                        printf -- '- [%s](%s) — %s\n' "${fm_name:-$name}" "$name" "${fm_desc:-}" >> "$SHARED_MEM/MEMORY.md"
                         bash "$script_self" sync >/dev/null 2>&1 || true
                         echo "  → promoted to shared."
                         n_promoted=$((n_promoted + 1))
+                        promoted_names+=("$name")
                         break
                         ;;
                     k|K)
@@ -397,6 +523,11 @@ case "$cmd" in
         printf 'Deleted:            %d\n' "$n_deleted"
         printf 'Skipped:            %d\n' "$n_skipped"
         echo ""
+
+        if [ "$n_promoted" -gt 0 ]; then
+            shared_push "promote: ${promoted_names[*]} from $project_slug"
+        fi
+
         echo "Run 'bash scripts/memory.sh list' to see current state."
         ;;
     help|--help|-h)
