@@ -70,10 +70,10 @@ case "$cmd" in
       exit 0
     fi
     if [ "$result" = "fail" ]; then
-      osascript -e "display notification \"⚠️ blocked — $task_name\" with title \"Tandem · auto failed\" sound name \"Funk\"" 2>/dev/null || true
-      say -v Mei-Jia "卡住了" 2>/dev/null || true
+      osascript -e "display notification \"⚠️ blocked — $task_name\" with title \"Tandem · auto failed\" sound name \"Funk\"" || echo "[notify] osascript failed (host permission?)" >&2
+      say -v Mei-Jia "卡住了" 2>/dev/null || echo "[notify] say failed" >&2
     else
-      osascript -e "display notification \"✅ done — $task_name\" with title \"Tandem · auto done\" sound name \"Glass\"" 2>/dev/null || true
+      osascript -e "display notification \"✅ done — $task_name\" with title \"Tandem · auto done\" sound name \"Glass\"" || echo "[notify] osascript failed (host permission?)" >&2
     fi
     ;;
 
