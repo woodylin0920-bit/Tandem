@@ -1,13 +1,13 @@
 # WALKTHROUGH — how hello-cli got built
 
-This is a narrative of a complete plan/execute cycle using woody-harness. Follow along
+This is a narrative of a complete plan/execute cycle using Tandem. Follow along
 to see how the pieces fit: bootstrap, planner prompt, executor run, smoke test, RESUME update.
 
 ---
 
 ## The setup
 
-The user ran `bash ~/woody-harness/bootstrap.sh hello-cli` from their project directory.
+The user ran `bash ~/Tandem/bootstrap.sh hello-cli` from their project directory.
 Bootstrap produced this directory structure:
 
 ```
@@ -30,7 +30,7 @@ hello-cli/
 
 Bootstrap also:
 - Created a memory directory at `~/.claude-work/projects/<slug>/memory/` with four starter memories.
-- Ran `git init` and made an initial `chore: bootstrap from woody-harness` commit.
+- Ran `git init` and made an initial `chore: bootstrap from Tandem` commit.
 
 The state of this example directory at commit 1 (`feat: examples/hello-cli/ — bootstrapped skeleton`)
 captures exactly this post-bootstrap, pre-feature state.
@@ -87,7 +87,7 @@ captures the post-execution state.
 Conceptual `git log --oneline` of the hello-cli demo project (as narrated commits):
 
 ```
-chore: bootstrap from woody-harness
+chore: bootstrap from Tandem
 feat: add hello.sh greeting CLI
 test: smoke test for hello.sh
 ```
@@ -121,7 +121,7 @@ Ten lines. One responsibility. Testable in one command. That is a ship-ready Pha
 
 ## Doing this yourself
 
-Read `docs/TUTORIAL.md` in the woody-harness root for a full 30-minute walkthrough:
+Read `docs/TUTORIAL.md` in the Tandem root for a full 30-minute walkthrough:
 cloning the harness, bootstrapping your own project, opening two sessions, planning your
 first feature, running `/inbox`, and gating with `/phase-gate`.
 

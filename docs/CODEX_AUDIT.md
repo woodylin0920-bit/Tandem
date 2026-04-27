@@ -1,6 +1,6 @@
 # Codex Audit
 
-woody-harness 把 codex consult-mode 抽成 reusable audit pattern。
+Tandem 把 codex consult-mode 抽成 reusable audit pattern。
 
 ## 為什麼要 codex
 

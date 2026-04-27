@@ -1,6 +1,6 @@
 # Shared memory layer
 
-woody-harness's shared memory layer means **Claude gets smarter as you work across projects**. Preferences, workflow rules, and lessons-learned that apply to *you* (not a specific repo) live once at `~/.claude-work/_shared/memory/` and are symlinked into every project.
+Tandem's shared memory layer means **Claude gets smarter as you work across projects**. Preferences, workflow rules, and lessons-learned that apply to *you* (not a specific repo) live once at `~/.claude-work/_shared/memory/` and are symlinked into every project.
 
 ## Layout
 

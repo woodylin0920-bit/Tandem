@@ -34,7 +34,7 @@ After login: `gh auth status` should show `Logged in to github.com`.
 **Fix**:
 ```bash
 # Option A: pull the latest harness and re-bootstrap (if project is new)
-cd ~/woody-harness && git pull
+cd ~/Tandem && git pull
 
 # Option B: fix in-place (BSD sed — macOS and BSD Linux)
 find . -type f -exec sed -i '' 's/{{PROJECT_NAME}}/yourprojectname/g' {} +
@@ -154,7 +154,7 @@ ls ~/.claude-work/projects/-Users-you-Desktop-repo-hello-world/memory/
 # Should show MEMORY.md and the four template files
 ```
 
-If the directory is missing, re-run bootstrap, or manually copy from `~/woody-harness/templates/memory/`.
+If the directory is missing, re-run bootstrap, or manually copy from `~/Tandem/templates/memory/`.
 
 ---
 
@@ -175,7 +175,7 @@ If the directory is missing, re-run bootstrap, or manually copy from `~/woody-ha
 
 **Symptom**: Running `/codex-audit` prints an error that the `codex` binary is not found.
 
-**Cause**: The OpenAI Codex CLI is not installed. woody-harness does not bundle it — it is a separate dependency.
+**Cause**: The OpenAI Codex CLI is not installed. Tandem does not bundle it — it is a separate dependency.
 
 **Fix**: Install per the [OpenAI Codex CLI docs](https://github.com/openai/codex). As of 2026, the install is typically:
 ```bash
@@ -202,10 +202,10 @@ cat .claude/settings.json   # should contain the SessionStart hook
 ls RESUME.md   # should exist
 
 # If settings.json is missing: re-bootstrap (for new projects) or copy manually
-cp ~/woody-harness/.claude/settings.json .claude/settings.json
+cp ~/Tandem/.claude/settings.json .claude/settings.json
 
 # If RESUME.md is missing: copy template
-cp ~/woody-harness/templates/RESUME.md RESUME.md
+cp ~/Tandem/templates/RESUME.md RESUME.md
 ```
 
 If you bootstrapped before Phase 4b (before commit `feat: SessionStart auto-briefing hook + bootstrap copies all commands + settings.json` was in the harness), you may need to copy these files manually.
@@ -221,7 +221,7 @@ If you bootstrapped before Phase 4b (before commit `feat: SessionStart auto-brie
 **Fix**:
 ```bash
 # Copy from the harness
-cp ~/woody-harness/.claude/commands/brief.md .claude/commands/brief.md
+cp ~/Tandem/.claude/commands/brief.md .claude/commands/brief.md
 git add .claude/commands/brief.md
 git commit -m "chore: backfill /brief slash command from harness Phase 4b"
 ```
@@ -262,7 +262,7 @@ git commit -m "chore: backfill /brief slash command from harness Phase 4b"
 ## Still stuck?
 
 Open an issue using the bug template:
-[github.com/woodylin0920-bit/woody-harness/issues/new/choose](https://github.com/woodylin0920-bit/woody-harness/issues/new/choose)
+[github.com/woodylin0920-bit/Tandem/issues/new/choose](https://github.com/woodylin0920-bit/Tandem/issues/new/choose)
 
 Include this in your report:
 

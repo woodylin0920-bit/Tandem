@@ -1,4 +1,4 @@
-# woody-harness — Future Design Notes
+# Tandem — Future Design Notes
 
 Ideas captured during development, deferred until real demand surfaces. Each entry has trigger conditions — only build when those fire.
 
@@ -66,7 +66,7 @@ Backwards-compatible. Add when implementing Tier 1.
 
 ### Where to land
 
-woody-harness Phase 3 (automation / CI / notifications). Same family as push-notification work.
+Tandem Phase 3 (automation / CI / notifications). Same family as push-notification work.
 
 ### Scaling models (added 2026-04-27)
 
@@ -114,7 +114,7 @@ Two flavors:
 
 ### Why this matters
 
-Right now woody-harness is **file conventions + bash scripts**. To use it, you must know:
+Right now Tandem is **file conventions + bash scripts**. To use it, you must know:
 - where `_inbox.md` lives
 - what slash commands exist
 - how memory dir maps to project path
@@ -123,7 +123,7 @@ Right now woody-harness is **file conventions + bash scripts**. To use it, you m
 A `harness` CLI hides this — `harness inbox edit` Just Works regardless of cwd-confusion.
 
 This is what makes the framework **forkable / shareable** (matches Q5 success metric):
-- New user runs `pip install woody-harness` (or `brew install harness`)
+- New user runs `pip install Tandem` (or `brew install harness`)
 - Reads README's quick-start: `harness new my-project`
 - Doesn't need to learn the entire file taxonomy upfront — discovers it via `harness <subcommand> --help`
 
@@ -153,7 +153,7 @@ Recommend: **Python + Click** for v1 (CLI only, no TUI yet). Add Textual for TUI
 
 Phase 5 (after Phase 4 onboarding work proves what subcommands users actually need).
 
-Can also live in a separate repo: `woody-harness-cli` ← references the templates from `woody-harness`. Keeps the framework spec separate from the tool.
+Can also live in a separate repo: `Tandem-cli` ← references the templates from `Tandem`. Keeps the framework spec separate from the tool.
 
 ---
 

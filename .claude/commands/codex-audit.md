@@ -2,7 +2,7 @@
 description: 跑 codex 整體審查，按 templates/prompts/CODEX_AUDIT.md 格式
 ---
 
-讀 templates/prompts/CODEX_AUDIT.md（如果不在當前 project 內，去 ~/Desktop/repo/public/woody-harness/templates/prompts/CODEX_AUDIT.md 找模板）。
+讀 templates/prompts/CODEX_AUDIT.md（如果不在當前 project 內，去 ~/Desktop/repo/public/Tandem/templates/prompts/CODEX_AUDIT.md 找模板）。
 
 詢問 user 8 個 placeholder 值：
 - PROJECT_NAME

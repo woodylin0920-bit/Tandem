@@ -1,4 +1,4 @@
-# Removing woody-harness from a project
+# Removing Tandem from a project
 
 `bash bootstrap.sh --remove <path>` cleanly extracts the framework from a
 project, leaving your own work untouched. Defaults to **dry-run**; pass
@@ -8,10 +8,10 @@ project, leaving your own work untouched. Defaults to **dry-run**; pass
 
 ```bash
 # See what would be deleted
-bash ~/woody-harness/bootstrap.sh --remove /path/to/target
+bash ~/Tandem/bootstrap.sh --remove /path/to/target
 
 # Actually delete
-bash ~/woody-harness/bootstrap.sh --remove /path/to/target --apply
+bash ~/Tandem/bootstrap.sh --remove /path/to/target --apply
 ```
 
 ## What gets deleted
@@ -29,9 +29,9 @@ cleaned up via `rmdir`.
 ## Pre-flight
 
 1. Target path must exist
-2. Target must look like a woody-harness project (`.claude/commands/inbox.md` exists) — otherwise nothing to remove
+2. Target must look like a Tandem project (`.claude/commands/inbox.md` exists) — otherwise nothing to remove
 
-Dirty working tree is fine — you'll likely want to commit `"remove woody-harness"` right after.
+Dirty working tree is fine — you'll likely want to commit `"remove Tandem"` right after.
 
 ## Memory dir is preserved by design
 
@@ -70,7 +70,7 @@ Would reverse-merge .claude/settings.json:
 
 Skipped — user-modified (1):
   docs/prompts/README.md   [hash differs from framework, kept as-is]
-    → diff: diff /path/to/target/docs/prompts/README.md /Users/you/woody-harness/templates/prompts/README.md
+    → diff: diff /path/to/target/docs/prompts/README.md /Users/you/Tandem/templates/prompts/README.md
 
 Would remove empty dirs (if any):
   scripts/, .claude/commands/, .claude/

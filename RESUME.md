@@ -1,8 +1,8 @@
-# woody-harness — RESUME
+# Tandem — RESUME
 
 **What**: Self-use solo-dev workflow harness for Claude Code (planner/executor split via 2 terminals).
 **Version**: 0.4.0 + S-1 (bootstrap --upgrade-existing / --remove modes shipped 2026-04-27)
-**Repo**: https://github.com/woodylin0920-bit/woody-harness
+**Repo**: https://github.com/woodylin0920-bit/Tandem
 
 ## Current focus
 
@@ -10,7 +10,7 @@ Phase 4 polish + self-host gaps. Recent rounds: r1 (TROUBLESHOOTING), r2 (memory
 
 ## How to use this harness on itself
 
-woody-harness self-hosts since 4a — its own inbox lives at `docs/prompts/_inbox.md`, runs through `/inbox` slash command, archives via `scripts/archive-prompts.sh`.
+Tandem self-hosts since 4a — its own inbox lives at `docs/prompts/_inbox.md`, runs through `/inbox` slash command, archives via `scripts/archive-prompts.sh`.
 
 ```bash
 # Planner terminal (Opus):
@@ -40,7 +40,7 @@ claude --model sonnet
 
 ## Memory dir
 
-`~/.claude-work/projects/-Users-woody-Desktop-repo-public-woody-harness/memory/`
+`~/.claude-work/projects/-Users-woody-Desktop-repo-public-Tandem/memory/`
 
 `MEMORY.md` is the index; individual memory files (user/feedback/project/reference) live alongside.
 

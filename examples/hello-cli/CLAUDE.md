@@ -1,6 +1,6 @@
 # hello-cli
 
-This project uses [woody-harness](https://github.com/woodylin0920-bit/woody-harness) workflow conventions.
+This project uses [Tandem](https://github.com/woodylin0920-bit/Tandem) workflow conventions.
 
 ## Skill routing
 
@@ -21,4 +21,4 @@ After execution, the prompt is archived to `docs/prompts/<descriptive-name>.md`.
 
 Persistent memory at `~/.claude-work/projects/-Users-{user}-{repo-path}/memory/`. Auto-loaded each session.
 
-See [woody-harness docs](https://github.com/woodylin0920-bit/woody-harness/tree/main/docs) for full conventions.
+See [Tandem docs](https://github.com/woodylin0920-bit/Tandem/tree/main/docs) for full conventions.

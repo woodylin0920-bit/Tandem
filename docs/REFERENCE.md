@@ -1,4 +1,4 @@
-# woody-harness reference
+# Tandem reference
 
 Flat list of every CLI mode, slash command, script, hook, and memory location. For *why* and *how to use*, see TUTORIAL / WORKFLOW / individual docs.
 
@@ -67,7 +67,7 @@ Set in `.claude/settings.json` `statusLine.command = "bash scripts/statusline.sh
 ## Source layout
 
 ```
-woody-harness/
+Tandem/
 ├── bootstrap.sh                  # entrypoint (new / upgrade / remove)
 ├── RESUME.md                     # self-host status (this harness on itself)
 ├── README.md                     # GitHub landing

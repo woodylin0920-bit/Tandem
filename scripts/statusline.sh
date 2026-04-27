@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# statusline.sh — woody-harness status indicator for Claude Code statusLine.
+# statusline.sh — Tandem status indicator for Claude Code statusLine.
 # Output: "📥 <state> · <short commit> · last: <emoji>"
 # Must be fast (<100ms): only git log, ls, head, grep — no network, no tar.
 set -e

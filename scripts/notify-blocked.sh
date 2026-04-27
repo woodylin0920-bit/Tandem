@@ -3,4 +3,4 @@
 # Triggered by Notification event hook in .claude/settings.json.
 # afplay backgrounded so the hook returns instantly; osascript best-effort.
 afplay /System/Library/Sounds/Funk.aiff &
-osascript -e 'display notification "⚠️ executor needs your input" with title "woody-harness · blocked"' 2>/dev/null || true
+osascript -e 'display notification "⚠️ executor needs your input" with title "Tandem · blocked"' 2>/dev/null || true

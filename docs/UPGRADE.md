@@ -1,17 +1,17 @@
 # Upgrading existing projects
 
 `bash bootstrap.sh --upgrade-existing <path>` reverse-syncs the latest
-woody-harness framework into a project that was bootstrapped from an older
+Tandem framework into a project that was bootstrapped from an older
 version. Defaults to **dry-run**; pass `--apply` to actually write changes.
 
 ## Usage
 
 ```bash
 # See what would change
-bash ~/woody-harness/bootstrap.sh --upgrade-existing /path/to/target
+bash ~/Tandem/bootstrap.sh --upgrade-existing /path/to/target
 
 # Actually write
-bash ~/woody-harness/bootstrap.sh --upgrade-existing /path/to/target --apply
+bash ~/Tandem/bootstrap.sh --upgrade-existing /path/to/target --apply
 ```
 
 ## What gets touched
@@ -27,14 +27,14 @@ bash ~/woody-harness/bootstrap.sh --upgrade-existing /path/to/target --apply
 
 1. Target path must exist
 2. Target must be a git repo (`.git/` present) — abort otherwise; run `git init` first
-3. Target must look like a woody-harness project (`.claude/commands/inbox.md` exists)
+3. Target must look like a Tandem project (`.claude/commands/inbox.md` exists)
 4. Working tree dirty → warn but continue (so you can review the upgrade as a single commit). If you'd rather not mix existing changes with upgrade output, run `git stash` first or commit before upgrading.
 
 ## Sample dry-run output
 
 ```
 [upgrade] Target: /path/to/target
-[upgrade] Framework: /Users/you/woody-harness
+[upgrade] Framework: /Users/you/Tandem
 
 Would overwrite (3):
   .claude/commands/sync.md                     [new file]
@@ -49,7 +49,7 @@ Would merge .claude/settings.json:
 
 Skipped — user-modified (1):
   docs/prompts/README.md
-    → diff: diff /path/to/target/docs/prompts/README.md /Users/you/woody-harness/templates/prompts/README.md
+    → diff: diff /path/to/target/docs/prompts/README.md /Users/you/Tandem/templates/prompts/README.md
 
 Up-to-date (8):
   .claude/commands/inbox.md
@@ -66,7 +66,7 @@ Inspect changes before committing:
 ```bash
 git -C /path/to/target diff
 git -C /path/to/target add -A
-git -C /path/to/target commit -m "chore: upgrade woody-harness framework"
+git -C /path/to/target commit -m "chore: upgrade Tandem framework"
 ```
 
 ## When to upgrade

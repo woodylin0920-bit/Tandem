@@ -2,9 +2,9 @@
 
 ## What this is
 
-A static snapshot of a real woody-harness project after one phase shipped.
+A static snapshot of a real Tandem project after one phase shipped.
 `hello-cli` is not a runnable independent repository — there is no nested `.git`.
-It lives inside the `woody-harness` repo so you can browse the files and read the
+It lives inside the `Tandem` repo so you can browse the files and read the
 diff history directly in the parent repo context.
 
 The snapshot captures three logical states:
@@ -32,7 +32,7 @@ Open the files in this order:
 
 ## Try it locally
 
-From within a clone of `woody-harness`, run from the `examples/hello-cli/` directory:
+From within a clone of `Tandem`, run from the `examples/hello-cli/` directory:
 
 ```bash
 cd examples/hello-cli
@@ -53,9 +53,9 @@ bash tests/test_hello.sh
 
 - **No memory directory** — memory lives at
   `~/.claude-work/projects/<slug>/memory/` on the developer's machine, outside any
-  repo. See `docs/MEMORY_SYSTEM.md` in the woody-harness root for what those files
+  repo. See `docs/MEMORY_SYSTEM.md` in the Tandem root for what those files
   contain and how they get auto-loaded.
-- **No `.git`** — would conflict with the parent `woody-harness` repo. The "commits"
+- **No `.git`** — would conflict with the parent `Tandem` repo. The "commits"
   of the demo project are narrated in `WALKTHROUGH.md` as text, not real git history.
 - **No GitHub remote** — a real project would have `git remote add origin <url>` and
   a `git push` after the phase gate passes.
@@ -68,7 +68,7 @@ Run `bash bootstrap.sh hello-cli` somewhere else on your disk:
 
 ```bash
 cd ~/Desktop/repo          # or wherever you keep projects
-bash ~/woody-harness/bootstrap.sh hello-cli
+bash ~/Tandem/bootstrap.sh hello-cli
 cd hello-cli
 ```
 

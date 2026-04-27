@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# woody-harness bootstrap — create new project, upgrade, or remove framework.
+# Tandem bootstrap — create new project, upgrade, or remove framework.
 # Usage:
 #   bash bootstrap.sh <project-name>                          # create new project
 #   bash bootstrap.sh --upgrade-existing <path> [--apply]     # upgrade existing project
@@ -78,7 +78,7 @@ upgrade_preflight() {
     [ -d "$target" ] || { echo "ERROR: $target does not exist" >&2; exit 1; }
     [ -d "$target/.git" ] || { echo "ERROR: $target is not a git repo (run 'git init' first)" >&2; exit 1; }
     [ -f "$target/.claude/commands/inbox.md" ] || {
-        echo "ERROR: This doesn't look like a woody-harness project. Run 'bash bootstrap.sh <name>' first." >&2
+        echo "ERROR: This doesn't look like a Tandem project. Run 'bash bootstrap.sh <name>' first." >&2
         exit 1
     }
     if ! git -C "$target" diff-index --quiet HEAD -- 2>/dev/null; then
@@ -296,7 +296,7 @@ remove_preflight() {
     local target="$1"
     [ -d "$target" ] || { echo "ERROR: $target does not exist" >&2; exit 1; }
     [ -f "$target/.claude/commands/inbox.md" ] || {
-        echo "ERROR: Not a woody-harness project, nothing to remove." >&2
+        echo "ERROR: Not a Tandem project, nothing to remove." >&2
         exit 1
     }
 }
@@ -601,7 +601,7 @@ git init -q
 bash scripts/memory.sh sync >/dev/null 2>&1 || echo "[bootstrap] WARN: memory sync failed (run 'bash scripts/memory.sh sync' manually)"
 
 git add .
-git commit -q -m "chore: bootstrap from woody-harness"
+git commit -q -m "chore: bootstrap from Tandem"
 
 # Sanity check — RESUME.md is required for SessionStart briefing
 test -f RESUME.md || { echo "[bootstrap] WARN: RESUME.md missing — SessionStart briefing will be silent" >&2; }

@@ -23,15 +23,15 @@ You do **not** need Python, Node, or any language runtime to run the harness its
 ## Step 1 — Clone the harness (one-time)
 
 ```bash
-git clone https://github.com/woodylin0920-bit/woody-harness ~/woody-harness
+git clone https://github.com/woodylin0920-bit/Tandem ~/Tandem
 ```
 
-Clone once to `~/woody-harness`. You will never `cd` into it during normal work — it is a template source that `bootstrap.sh` reads from.
+Clone once to `~/Tandem`. You will never `cd` into it during normal work — it is a template source that `bootstrap.sh` reads from.
 
 Why clone-once-then-bootstrap:
 - The harness directory stays stable as a reference.
 - Bootstrap copies templates into each new project, so projects are self-contained.
-- Updating the harness (`git pull` in `~/woody-harness`) does not break existing projects.
+- Updating the harness (`git pull` in `~/Tandem`) does not break existing projects.
 
 ---
 
@@ -41,7 +41,7 @@ Pick a project name (lowercase, hyphens ok):
 
 ```bash
 cd ~/Desktop/repo          # or wherever you keep projects
-bash ~/woody-harness/bootstrap.sh hello-world
+bash ~/Tandem/bootstrap.sh hello-world
 cd hello-world
 ```
 
@@ -292,7 +292,7 @@ For the philosophy behind these choices, read `docs/HARNESS_ETHOS.md`.
 
 - Read `docs/WORKFLOW.md` for the full two-session diagram and rules of thumb.
 - Skim `docs/FUTURE.md` for deferred ideas (CI hooks, multi-worker dashboard, etc.) — don't implement these unless you need them.
-- If anything broke or felt wrong during this tutorial, open an issue using the bug template: [github.com/woodylin0920-bit/woody-harness/issues](https://github.com/woodylin0920-bit/woody-harness/issues). Include `git log --oneline -5` and `bash --version`.
+- If anything broke or felt wrong during this tutorial, open an issue using the bug template: [github.com/woodylin0920-bit/Tandem/issues](https://github.com/woodylin0920-bit/Tandem/issues). Include `git log --oneline -5` and `bash --version`.
 - Once your project has a few phases shipped, try `/brief` in your executor session for a quick "where are we" briefing.
 - For memory system details (what gets auto-loaded, what each template means), read `docs/MEMORY_SYSTEM.md`.
 - See [`examples/hello-cli/`](../examples/hello-cli/) for a worked snapshot of a project that just shipped Phase 1 — read `WALKTHROUGH.md` for the narrative.

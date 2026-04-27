@@ -32,11 +32,11 @@ description: 讀 docs/prompts/_inbox.md 的 prompt 開工，完成後 append Res
 
    - **成功**：
      ```
-     osascript -e 'display notification "✅ <count> commits — <slug>" with title "woody-harness · inbox done" sound name "Glass"'
+     osascript -e 'display notification "✅ <count> commits — <slug>" with title "Tandem · inbox done" sound name "Glass"'
      ```
    - **卡住 / 失敗**：
      ```
-     osascript -e 'display notification "⚠️ blocked — see _inbox.md" with title "woody-harness · inbox blocked" sound name "Funk"'
+     osascript -e 'display notification "⚠️ blocked — see _inbox.md" with title "Tandem · inbox blocked" sound name "Funk"'
      say -v Mei-Jia "卡住了" 2>/dev/null || true
      ```
 

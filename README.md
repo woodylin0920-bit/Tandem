@@ -1,6 +1,6 @@
-# woody-harness
+# Tandem
 
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg) ![Latest release](https://img.shields.io/github/v/release/woodylin0920-bit/woody-harness) ![Bash + Markdown](https://img.shields.io/badge/stack-bash%20%2B%20markdown-blue) ![Zero deps](https://img.shields.io/badge/deps-zero-brightgreen)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg) ![Latest release](https://img.shields.io/github/v/release/woodylin0920-bit/Tandem) ![Bash + Markdown](https://img.shields.io/badge/stack-bash%20%2B%20markdown-blue) ![Zero deps](https://img.shields.io/badge/deps-zero-brightgreen)
 
 Solo developer framework for fast-shipping AI-augmented projects with Claude Code (Opus + Sonnet split).
 
@@ -20,7 +20,7 @@ Extracted from real-world solo project development: 4 ship-able phases + safety 
 - **Cross-project shared memory** — your preferences, workflow rules, and lessons-learned live once at `~/.claude-work/_shared/memory/` and symlink into every project. Add a memory once, get it everywhere. See [docs/SHARED_MEMORY.md](docs/SHARED_MEMORY.md).
 - **Memory portability** — `bash scripts/memory.sh export/import` to move memory dirs across machines
 
-## Why woody-harness?
+## Why Tandem?
 
 - **vs. raw Claude Code**: gives you the prompt-handoff + memory + phase-gate scaffolding instead of starting blank every session
 - **vs. taskmaster / agent frameworks**: pure bash + markdown, zero deps, one-command bootstrap, fork-friendly
@@ -30,11 +30,11 @@ Extracted from real-world solo project development: 4 ship-able phases + safety 
 
 ```bash
 # Clone harness once
-git clone https://github.com/woodylin0920-bit/woody-harness ~/woody-harness
+git clone https://github.com/woodylin0920-bit/Tandem ~/Tandem
 
 # Bootstrap new project
 cd ~/Desktop/repo
-bash ~/woody-harness/bootstrap.sh my-new-project
+bash ~/Tandem/bootstrap.sh my-new-project
 cd my-new-project
 
 # Open two Claude Code sessions:
@@ -45,7 +45,7 @@ cd my-new-project
 ## Maintenance
 
 - **Upgrade existing projects** — `bash bootstrap.sh --upgrade-existing <path>` reverse-syncs the latest framework into older projects. Dry-run by default. See [docs/UPGRADE.md](docs/UPGRADE.md).
-- **Remove woody-harness** — `bash bootstrap.sh --remove <path>` cleanly extracts the framework while preserving your own work + memory. Dry-run by default. See [docs/REMOVE.md](docs/REMOVE.md).
+- **Remove Tandem** — `bash bootstrap.sh --remove <path>` cleanly extracts the framework while preserving your own work + memory. Dry-run by default. See [docs/REMOVE.md](docs/REMOVE.md).
 
 **Quick reference**: see [`docs/REFERENCE.md`](docs/REFERENCE.md) for every command, script, and hook.
 

@@ -1,6 +1,6 @@
 # Harness ethos
 
-Why woody-harness looks the way it does. Read once.
+Why Tandem looks the way it does. Read once.
 
 ---
 
@@ -18,11 +18,11 @@ Markdown is the right format here because both humans and LLMs read it without t
 
 One logical change per commit. Not "today's work." Not "WIP." Not "fix stuff."
 
-Atomic commits are revertable: `git revert <sha>` undoes exactly one thing. They are bisectable: `git bisect` can find the exact commit that introduced a regression. And they are self-documenting: `git log --oneline` of woody-harness itself reads like a changelog.
+Atomic commits are revertable: `git revert <sha>` undoes exactly one thing. They are bisectable: `git bisect` can find the exact commit that introduced a regression. And they are self-documenting: `git log --oneline` of Tandem itself reads like a changelog.
 
 ```
 8b92644 docs: capture multi-worker dashboard idea in FUTURE.md (deferred)
-3d1b14b feat: woody-harness Phase 1 — bootstrap + inbox + memory templates
+3d1b14b feat: Tandem Phase 1 — bootstrap + inbox + memory templates
 ```
 
 That is enough context to understand the project history without opening a single file. Write commits as if the subject line is all the future maintainer will see — because often it is.
@@ -99,7 +99,7 @@ This is intentional. A developer workflow tool should not have SLAs. Fork it, st
 
 Not an agent framework. Not taskmaster. Not a productivity app with a dashboard.
 
-woody-harness is a workflow scaffold for **one person + Claude Code**. The "orchestration" is you — picking what to build, deciding tradeoffs, writing prompts that Sonnet can execute. The harness provides the folder structure, the handoff convention, the memory templates, and the phase gate. You provide the judgment.
+Tandem is a workflow scaffold for **one person + Claude Code**. The "orchestration" is you — picking what to build, deciding tradeoffs, writing prompts that Sonnet can execute. The harness provides the folder structure, the handoff convention, the memory templates, and the phase gate. You provide the judgment.
 
 For multi-agent orchestration → langgraph, autogen, or similar. For automated task management → taskmaster. For Claude Code keyboard shortcuts and settings → `/config`. Those are different tools for different problems.
 
