@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-# memory.sh — export / import / list / sync the auto-memory dir for the current repo.
+# memory.sh — export / import / list / sync / promote the auto-memory dir for the current repo.
 # Memory lives at ~/.claude-work/projects/<slug>/memory/ where <slug>=absolute-repo-path with / -> -.
 # Usage:
 #   bash scripts/memory.sh export                # tarball -> ~/.claude-work/exports/<slug>-memory-<date>.tar.gz
 #   bash scripts/memory.sh import <tarball>      # extracts into the current repo's memory dir (refuses if exists; FORCE=1 to override)
 #   bash scripts/memory.sh list                  # show current repo's memory dir + contents
 #   bash scripts/memory.sh sync                  # symlink shared layer into project memory + regenerate combined MEMORY.md
+#   bash scripts/memory.sh promote               # interactive: move project memory entries to shared layer (promote/keep/delete/skip)
 set -euo pipefail
 
 memory_dir_for_repo() {
@@ -202,8 +203,204 @@ case "$cmd" in
         echo ""
         echo "Done."
         ;;
+    promote)
+        proj_mem=$(memory_dir_for_repo) || exit 1
+        shared_mem="$HOME/.claude-work/_shared/memory"
+        script_self="$(cd "$(dirname -- "$0")" && pwd)/$(basename -- "$0")"
+
+        # Pre-flight
+        if [ ! -d "$proj_mem" ]; then
+            echo "error: no project memory dir for $(pwd) — run bootstrap.sh first" >&2
+            exit 1
+        fi
+        if [ ! -d "$shared_mem" ]; then
+            echo "error: no shared layer at $shared_mem — run bootstrap.sh on a new project to seed it" >&2
+            exit 1
+        fi
+        if [ ! -f "$proj_mem/MEMORY.md" ] || ! grep -q "<!-- BEGIN project-local" "$proj_mem/MEMORY.md"; then
+            echo "error: project MEMORY.md missing T-1a-α markers — run 'bash scripts/memory.sh sync' first" >&2
+            exit 1
+        fi
+
+        # Parse one frontmatter field from a file
+        parse_field() {
+            awk -v field="$1" '
+                /^---$/ {fm++; next}
+                fm==1 && $0 ~ "^"field":" {sub("^"field":[ \t]*", ""); print; exit}
+            ' "$2"
+        }
+
+        # Read a single meaningful character, skipping newlines (works with both tty and piped stdin)
+        read_key() {
+            local ans rc
+            while true; do
+                IFS= read -r -n 1 ans
+                rc=$?
+                if [ $rc -ne 0 ] && [ -z "$ans" ]; then
+                    printf 'q'; return
+                fi
+                case "$ans" in
+                    $'\n'|$'\r'|'') continue ;;
+                    *) printf '%s' "$ans"; return ;;
+                esac
+            done
+        }
+
+        # Remove entry matching pattern from project-local section of MEMORY.md
+        remove_from_project_local() {
+            local memory_md="$1" entry_pattern="$2" tmp
+            tmp=$(mktemp)
+            awk -v pat="$entry_pattern" '
+                /<!-- BEGIN project-local/ {in_local=1; print; next}
+                /<!-- END project-local/ {in_local=0; print; next}
+                in_local && index($0, pat) > 0 {next}
+                {print}
+            ' "$memory_md" > "$tmp"
+            mv "$tmp" "$memory_md"
+        }
+
+        # Collect real files (non-symlink, non-MEMORY.md)
+        files=()
+        for f in "$proj_mem"/*.md; do
+            [ -e "$f" ] || continue
+            bname=$(basename "$f")
+            [ "$bname" = "MEMORY.md" ] && continue
+            [ -L "$f" ] && continue
+            files+=("$f")
+        done
+
+        if [ ${#files[@]} -eq 0 ]; then
+            echo "No real files found in $proj_mem (all are symlinks or none exist)."
+            echo "Run 'bash scripts/memory.sh list' to see current state."
+            exit 0
+        fi
+
+        IFS=$'\n' files=($(printf '%s\n' "${files[@]}" | sort))
+        unset IFS
+
+        total=${#files[@]}
+        n_promoted=0; n_kept=0; n_deleted=0; n_skipped=0
+        i=0
+
+        for file in "${files[@]}"; do
+            i=$((i + 1))
+            name=$(basename "$file")
+
+            fm_name=$(parse_field name "$file")
+            fm_desc=$(parse_field description "$file")
+            fm_type=$(parse_field type "$file")
+
+            echo "---"
+            printf '[%d/%d] %s\n' "$i" "$total" "$name"
+            if [ -z "$fm_name" ] && [ -z "$fm_desc" ] && [ -z "$fm_type" ]; then
+                echo "  (no frontmatter)"
+            else
+                [ -n "$fm_name" ]  && echo "  name: $fm_name"
+                [ -n "$fm_desc" ]  && echo "  description: $fm_desc"
+                [ -n "$fm_type" ]  && echo "  type: $fm_type"
+            fi
+            echo ""
+
+            while true; do
+                printf "Action? [p]romote / [k]eep / [d]elete / [s]kip / [q]uit: "
+                ans=$(read_key)
+                echo ""
+
+                case "$ans" in
+                    p|P)
+                        shared_target="$shared_mem/$name"
+                        conflict=0
+                        [ -e "$shared_target" ] && conflict=1
+
+                        if [ "$conflict" -eq 1 ]; then
+                            shared_fm_name=$(parse_field name "$shared_target" 2>/dev/null || true)
+                            echo "⚠️  shared already has '$name':"
+                            echo "    shared name: $shared_fm_name"
+                            echo "    local name:  $fm_name"
+                            while true; do
+                                printf "Choose: [o]verwrite shared / [r]ename local / [c]ancel: "
+                                conflict_ans=$(read_key)
+                                echo ""
+                                case "$conflict_ans" in
+                                    o|O) break ;;
+                                    r|R)
+                                        printf "new name (without .md): "
+                                        IFS= read -r new_base
+                                        echo ""
+                                        new_name="${new_base}.md"
+                                        mv "$file" "$proj_mem/$new_name"
+                                        file="$proj_mem/$new_name"
+                                        name="$new_name"
+                                        shared_target="$shared_mem/$name"
+                                        break
+                                        ;;
+                                    c|C)
+                                        echo "  → cancelled."
+                                        break 2
+                                        ;;
+                                    *) echo "  (invalid; expected o/r/c)" ;;
+                                esac
+                            done
+                        fi
+
+                        mv "$file" "$shared_target"
+                        remove_from_project_local "$proj_mem/MEMORY.md" "($name)"
+                        printf -- '- [%s](%s) — %s\n' "${fm_name:-$name}" "$name" "${fm_desc:-}" >> "$shared_mem/MEMORY.md"
+                        bash "$script_self" sync >/dev/null 2>&1 || true
+                        echo "  → promoted to shared."
+                        n_promoted=$((n_promoted + 1))
+                        break
+                        ;;
+                    k|K)
+                        echo "  → kept project-local."
+                        n_kept=$((n_kept + 1))
+                        break
+                        ;;
+                    d|D)
+                        printf "  Confirm permanent delete of %s? [y/N]: " "$name"
+                        confirm=$(read_key)
+                        echo ""
+                        case "$confirm" in
+                            y|Y)
+                                rm "$file"
+                                remove_from_project_local "$proj_mem/MEMORY.md" "($name)"
+                                echo "  → deleted."
+                                n_deleted=$((n_deleted + 1))
+                                ;;
+                            *)
+                                echo "  → cancelled."
+                                ;;
+                        esac
+                        break
+                        ;;
+                    s|S)
+                        echo "  → skipped (will appear next run)."
+                        n_skipped=$((n_skipped + 1))
+                        break
+                        ;;
+                    q|Q)
+                        echo ""
+                        echo "(quit)"
+                        break 2
+                        ;;
+                    *)
+                        echo "  (invalid; expected p/k/d/s/q)"
+                        ;;
+                esac
+            done
+        done
+
+        echo ""
+        echo "=== Summary ==="
+        printf 'Promoted to shared: %d\n' "$n_promoted"
+        printf 'Kept project-local: %d\n' "$n_kept"
+        printf 'Deleted:            %d\n' "$n_deleted"
+        printf 'Skipped:            %d\n' "$n_skipped"
+        echo ""
+        echo "Run 'bash scripts/memory.sh list' to see current state."
+        ;;
     help|--help|-h)
-        sed -n '2,9p' "$0"
+        sed -n '2,10p' "$0"
         ;;
     *)
         echo "unknown command: $cmd" >&2
