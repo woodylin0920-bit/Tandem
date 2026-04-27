@@ -20,7 +20,7 @@ If your habits look like mine — Claude Code (or any model with a markdown-awar
 - **Inbox handoff** — `docs/prompts/_inbox.md` is the cross-session mailbox; archived per round with `## Result` block convention
 - **Memory system** — auto-loaded preferences, workflow rules, and project state in `~/.claude-work/projects/<slug>/memory/`
 - **Cross-project shared memory** — preferences, workflow rules, lessons-learned at `~/.claude-work/_shared/memory/` symlink into every project. See [docs/SHARED_MEMORY.md](docs/SHARED_MEMORY.md). (Why this matters → "Why Tandem" below.)
-- **Slash commands** — `/inbox`, `/sync`, `/brief`, `/codex-audit`, `/phase-gate` (see [docs/REFERENCE.md](docs/REFERENCE.md))
+- **Slash commands** — `/inbox`, `/auto` (batch queue mode), `/sync`, `/brief`, `/codex-audit`, `/phase-gate` (see [docs/REFERENCE.md](docs/REFERENCE.md))
 - **Status line** — terminal-bottom live indicator: `📥 inbox state · last commit · last result emoji`
 - **Hooks** — `SessionStart` auto-briefing (RESUME + commits + latest archive Result), `Notification` alert when executor stalls (Funk + osascript banner)
 - **Phase-based atomic commits** — every change ship-ready, revertable
@@ -80,6 +80,7 @@ bootstrapped project after one phase shipped. Browse the files + read
 - [x] **Phase B** — model + effort selection guide (`docs/MODEL_GUIDE.md` + `## Execution profile` convention)
 - [x] **Phase C** — lessons loop (auto-stage on archive → `lessons.sh extract`/`review` → promote to shared memory; detection regex precision fixed in v0.5.0)
 - [x] **v0.5.0 release** — Phase B + Phase C + lesson detection precision fix
+- [x] **Phase D** — `/auto` batch queue mode (`_queue/` FIFO executor loop, fail-stop, archive + notify per task)
 - ~~Phase 3: CI / hooks / push notifications~~ (deferred — see [docs/FUTURE.md](docs/FUTURE.md))
 
 ## Contributing
