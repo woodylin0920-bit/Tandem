@@ -50,10 +50,11 @@ shared_lessons_push() {
 count_entries() {
     local state="${1:-}"
     [ -f "$STAGING" ] || { echo 0; return; }
+    local n
     if [ -z "$state" ]; then
-        grep -c '^<!-- BEGIN entry ' "$STAGING" 2>/dev/null || echo 0
+        n=$(grep -c '^<!-- BEGIN entry ' "$STAGING" 2>/dev/null || true); echo "${n:-0}"
     else
-        grep -c "^<!-- BEGIN entry .*state=$state" "$STAGING" 2>/dev/null || echo 0
+        n=$(grep -c "^<!-- BEGIN entry .*state=$state" "$STAGING" 2>/dev/null || true); echo "${n:-0}"
     fi
 }
 

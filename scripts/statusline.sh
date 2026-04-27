@@ -46,7 +46,7 @@ fi
 lessons_seg=""
 STAGING="$TANDEM_LESSONS_STAGING"
 if [ -f "$STAGING" ]; then
-    n_lessons=$(grep -c '^<!-- BEGIN entry ' "$STAGING" 2>/dev/null || echo 0)
+    n_lessons=$(grep -c '^<!-- BEGIN entry ' "$STAGING" 2>/dev/null || true); n_lessons=${n_lessons:-0}
     if [ "$n_lessons" -gt 0 ]; then
         lessons_seg=" · 🎓 $n_lessons"
     fi
