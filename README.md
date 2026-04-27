@@ -41,6 +41,8 @@ cd my-new-project
 - **Upgrade existing projects** — `bash bootstrap.sh --upgrade-existing <path>` reverse-syncs the latest framework into older projects. Dry-run by default. See [docs/UPGRADE.md](docs/UPGRADE.md).
 - **Remove woody-harness** — `bash bootstrap.sh --remove <path>` cleanly extracts the framework while preserving your own work + memory. Dry-run by default. See [docs/REMOVE.md](docs/REMOVE.md).
 
+**Quick reference**: see [`docs/REFERENCE.md`](docs/REFERENCE.md) for every command, script, and hook.
+
 ## See it in action
 
 [`examples/hello-cli/`](examples/hello-cli/) is a static snapshot of a real
