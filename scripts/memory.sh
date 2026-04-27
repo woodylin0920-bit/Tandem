@@ -63,7 +63,9 @@ shared_push() {
     local commit_msg="$1"
     local orig_dir="$PWD"
     cd "$SHARED_DIR"
-    git add -A
+    git add memory/*.md MEMORY.md 2>/dev/null || true
+    _extra=$(git status --porcelain | grep -v 'memory/\|MEMORY\.md' | grep -v '^$' || true)
+    [ -n "$_extra" ] && echo "[shared] non-tracked changes ignored ($(echo "$_extra" | wc -l | tr -d ' ') file(s)):" >&2 && echo "$_extra" >&2
     if git diff --cached --quiet; then
         cd "$orig_dir"
         return 0

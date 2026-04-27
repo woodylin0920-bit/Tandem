@@ -28,7 +28,9 @@ shared_lessons_push() {
         return 0
     fi
     cd "$SHARED_DIR"
-    git add -A
+    git add lessons/*.md 2>/dev/null || true
+    _extra=$(git status --porcelain | grep -v 'lessons/' | grep -v '^$' || true)
+    [ -n "$_extra" ] && echo "[shared] non-tracked changes ignored ($(echo "$_extra" | wc -l | tr -d ' ') file(s)):" >&2 && echo "$_extra" >&2
     if git diff --cached --quiet; then
         cd "$orig_dir"
         return 0
