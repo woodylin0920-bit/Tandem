@@ -1,5 +1,7 @@
 # WALKTHROUGH — how hello-cli got built
 
+> Walkthrough is real session output from Claude Code. The narrative still applies regardless of model — substitute whatever planner/executor pairing you use.
+
 This is a narrative of a complete plan/execute cycle using Tandem. Follow along
 to see how the pieces fit: bootstrap, planner prompt, executor run, smoke test, RESUME update.
 
