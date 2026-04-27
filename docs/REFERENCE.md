@@ -17,6 +17,7 @@ Flat list of every CLI mode, slash command, script, hook, and memory location. F
 | Command | Purpose |
 |---|---|
 | `/inbox` | Run `docs/prompts/_inbox.md`, append Result block, archive, notify (Glass on success, Mei-Jia "卡住了" on fail) |
+| `/auto` | Consume all tasks in `docs/prompts/_queue/` (FIFO by filename timestamp); fail-stop on any task failure |
 | `/brief` | Print RESUME.md head + recent commits + handoff memory |
 | `/sync` | Print git log + inbox state + latest archive Result block |
 | `/codex-audit` | Run codex review per `docs/CODEX_AUDIT.md` template |
@@ -35,8 +36,9 @@ Flat list of every CLI mode, slash command, script, hook, and memory location. F
 | | `bash scripts/memory.sh list` | List memory files |
 | | `bash scripts/memory.sh sync` | Symlink shared layer into current project + regenerate combined MEMORY.md |
 | | `bash scripts/memory.sh promote` | Interactive helper to migrate project memory entries to shared layer (promote/keep/delete) |
+| `auto-loop.sh` | `bash scripts/auto-loop.sh <next\|archive\|notify\|status>` | Queue management for `/auto`: FIFO next-task, archive on completion, notify per `TANDEM_AUTO_NOTIFY` env |
 | `lessons.sh` | `bash scripts/lessons.sh count\|list\|extract\|review` | Auto-extracted lesson candidates from inbox archives. See `docs/LESSONS.md`. |
-| `test-bootstrap.sh` | `bash scripts/test-bootstrap.sh` | 36-check regression test on bootstrap output |
+| `test-bootstrap.sh` | `bash scripts/test-bootstrap.sh` | 40-check regression test on bootstrap output |
 | `smoke.sh` | `bash scripts/smoke.sh` | Real-machine smoke test runner (per docs/SMOKE_TESTING.md) |
 
 ## Hooks (`.claude/settings.json`)

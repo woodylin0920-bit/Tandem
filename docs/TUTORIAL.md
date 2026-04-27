@@ -216,6 +216,44 @@ You watch but do not intervene. If Sonnet gets confused or stalls, it means the 
 
 ---
 
+## Auto mode — batch task queue (`/auto`)
+
+When the planner has several independent tasks ready and doesn't want the executor sitting idle between them, use the queue:
+
+**Drop tasks into `docs/prompts/_queue/`** with timestamp filenames (FIFO order):
+
+```
+docs/prompts/_queue/20260428-143000-add-linter.md
+docs/prompts/_queue/20260428-143001-update-readme.md
+docs/prompts/_queue/20260428-143002-fix-tests.md
+```
+
+Each file is a self-contained inbox prompt (same format as `_inbox.md`).
+
+**In Terminal B (Sonnet)**, type:
+
+```
+/auto
+```
+
+Sonnet processes tasks one by one in filename order:
+1. Reads the next file from `_queue/`
+2. Executes it (same flow as `/inbox`)
+3. Appends a `## Result` block and archives it to `_archive/YYYY-MM/`
+4. Moves to the next task
+
+**Fail-stop**: if any task fails verification, `/auto` stops immediately — leaving remaining tasks in queue and notifying via Funk sound. Fix the issue, then re-run `/auto`.
+
+**Notification behavior** (set env `TANDEM_AUTO_NOTIFY` in your shell):
+- `fail` (default) — silent on success, Funk on failure
+- `all` — Glass on success, Funk on failure
+- `none` — always silent
+
+Use `/auto` when: planner is writing several small prompts in a row and wants executor to burn through the queue unattended.
+Use `/inbox` when: single focused task that needs human review after.
+
+---
+
 ## Step 7 — Phase gate before shipping
 
 Before pushing anything to remote, run the phase gate in **Terminal B (Sonnet)**:

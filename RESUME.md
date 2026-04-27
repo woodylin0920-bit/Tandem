@@ -20,6 +20,7 @@ claude
 # Executor terminal (Sonnet):
 claude --model sonnet
 /inbox    # runs the queued prompt, commits, archives, notifies
+/auto     # batch mode: consumes all tasks in docs/prompts/_queue/ (FIFO, fail-stop)
 ```
 
 ## Where to look

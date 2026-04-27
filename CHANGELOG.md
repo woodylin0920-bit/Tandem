@@ -5,7 +5,9 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-(empty — next round adds entries)
+### Added
+
+- **`/auto` mode — queue-based executor loop.** New `/auto` slash command (`scripts/auto-loop.sh` + `.claude/commands/auto.md`) lets the planner drop multiple self-contained task files into `docs/prompts/_queue/` (timestamp FIFO filenames). The executor runs `/auto` and processes tasks sequentially: read → execute → append Result → archive → notify. Fail-stop on any task failure (leaves remaining tasks in queue). Notification controlled by `TANDEM_AUTO_NOTIFY` env (`fail` default = success silent, `all`, `none`). Bootstrap now creates `_queue/` and copies both files; `test-bootstrap.sh` updated to 40/40 assertions.
 
 ## [0.5.0] - 2026-04-28
 
