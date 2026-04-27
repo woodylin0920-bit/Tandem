@@ -23,7 +23,7 @@ Reverse-chronological work log. Latest at the top. Each ship-able milestone gets
 
 **Verify health (X seconds)**:
 ```bash
-~/venvs/{{PROJECT_NAME}}-venv/bin/pytest -v   # should be N passed
+# run your test suite here
 ```
 
 ---
