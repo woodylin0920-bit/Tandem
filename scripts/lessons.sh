@@ -8,14 +8,35 @@
 #   bash scripts/lessons.sh review            # candidate → promoted (shared memory) / deleted (interactive)
 set -euo pipefail
 
-STAGING="$HOME/.claude-work/_shared/lessons-staging.md"
-SHARED_MEM="$HOME/.claude-work/_shared/memory"
+SHARED_DIR="$HOME/.claude-work/shared"
+STAGING="$HOME/.claude-work/shared/lessons-staging.md"
+SHARED_MEM="$HOME/.claude-work/shared/memory"
+SHARED_LESSONS="$HOME/.claude-work/shared/lessons"
 
 cmd="${1:-help}"
 
 ensure_staging() {
-    mkdir -p "$(dirname "$STAGING")"
+    mkdir -p "$SHARED_DIR/lessons" "$SHARED_MEM"
     [ -f "$STAGING" ] || : > "$STAGING"
+}
+
+shared_lessons_push() {
+    local slug="$1"
+    if [ ! -d "$SHARED_DIR/.git" ]; then
+        echo "  WARN: $SHARED_DIR is not a git repo — skipping shared lessons push" >&2
+        return 0
+    fi
+    cd "$SHARED_DIR"
+    git add -A
+    if git diff --cached --quiet; then
+        return 0
+    fi
+    git commit -m "lesson: $slug"
+    if ! git push 2>&1; then
+        echo "error: git push to shared remote failed" >&2
+        echo "  Check: cd $SHARED_DIR && git push" >&2
+        exit 1
+    fi
 }
 
 count_entries() {
@@ -230,24 +251,30 @@ $refined
                         if [ -z "$slug" ]; then
                             slug="lesson_$(date +%s)"
                         fi
+                        shared_lessons_target="$SHARED_LESSONS/${slug}.md"
                         target="$SHARED_MEM/${slug}.md"
-                        if [ -e "$target" ]; then
-                            printf "  ⚠️  %s exists. [o]verwrite / [c]ancel: " "$target"
+                        if [ -e "$target" ] || [ -e "$shared_lessons_target" ]; then
+                            printf "  ⚠️  %s exists. [o]verwrite / [c]ancel: " "$slug"
                             cans=$(read_key); echo ""
                             case "$cans" in
                                 o|O) ;;
                                 *) echo "  → cancelled (kept as candidate)"; break ;;
                             esac
                         fi
-                        # Write frontmatter + body to file (strip BEGIN/END markers)
-                        echo "$block" | sed '1d;$d' > "$target"
+                        # Write to shared/lessons/ (canonical location)
+                        mkdir -p "$SHARED_LESSONS"
+                        echo "$block" | sed '1d;$d' > "$shared_lessons_target"
+                        # Also copy to shared/memory/ for immediate memory linking
+                        cp "$shared_lessons_target" "$target"
                         # Append index to shared MEMORY.md
                         name=$(awk '/^name:/ {sub(/^name:[ \t]*/, ""); print; exit}' "$target")
                         desc=$(awk '/^description:/ {sub(/^description:[ \t]*/, ""); print; exit}' "$target")
                         printf -- '- [%s](%s) — %s\n' "${name:-$slug}" "${slug}.md" "${desc:-}" >> "$SHARED_MEM/MEMORY.md"
                         remove_entry "$id"
-                        echo "  → promoted: $target"
+                        echo "  → promoted: lessons/$slug.md + memory/$slug.md"
                         n_promoted=$((n_promoted + 1))
+                        # Push to shared remote
+                        shared_lessons_push "$slug"
                         break
                         ;;
                     d|D)
