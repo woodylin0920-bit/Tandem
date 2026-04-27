@@ -6,6 +6,8 @@
 #   notify <success|fail> <name>  → notify per TANDEM_AUTO_NOTIFY env (default: fail)
 #   status                        → print queue state
 #   recover                       → warn about stale .running/ files from interrupted sessions
+#   lock                          → acquire executor mutex (delegates to executor-lock.sh)
+#   unlock                        → release executor mutex
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)" || { echo "not in a git repo" >&2; exit 1; }
 
@@ -97,6 +99,14 @@ case "$cmd" in
       echo "$stale" | while IFS= read -r f; do echo "  $(basename "$f")"; done
       echo "Move them back to _queue/ to retry, or archive manually."
     fi
+    ;;
+
+  lock)
+    bash "$(dirname "$0")/executor-lock.sh" acquire
+    ;;
+
+  unlock)
+    bash "$(dirname "$0")/executor-lock.sh" release
     ;;
 
   *)

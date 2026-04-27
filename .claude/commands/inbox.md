@@ -32,6 +32,8 @@ description: 讀 docs/prompts/_inbox.md 的 prompt 開工，完成後 append Res
 
 ## 執行流程
 
+**開始前**：先跑 `bash scripts/executor-lock.sh acquire`；若失敗（另一個 executor 正在跑），立刻停止，不執行任何動作。完成所有 commit + push 後，跑 `bash scripts/executor-lock.sh release`。
+
 1. `cat docs/prompts/_inbox.md` 看完整 prompt
 2. 完全照 prompt 開工（不要二次推理 prompt 的決策，那些已由規劃端鎖定）
 3. 全部 commit + push 完成後（或卡住時），執行**收尾流程**：

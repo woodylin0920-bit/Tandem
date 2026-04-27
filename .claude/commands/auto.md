@@ -32,6 +32,8 @@ description: 讀 docs/prompts/_queue/ 目錄，依時戳順序消化所有 task
 
 ## 執行流程（迴圈）
 
+**開始前**：先跑 `bash scripts/auto-loop.sh lock` 取得 executor mutex；若失敗（另一個 executor 正在跑），立刻停止，不執行任何任務。
+
 在每次迭代：
 
 1. 跑 `bash scripts/auto-loop.sh next` 取下一份任務檔路徑
@@ -81,6 +83,8 @@ description: 讀 docs/prompts/_queue/ 目錄，依時戳順序消化所有 task
 4. **不繼續後續任務**
 
 若重新開啟 session 後懷疑有殘檔，先跑 `bash scripts/auto-loop.sh recover` 確認 `.running/` 是否乾淨。
+
+**結束時**（成功完成 queue 或 fail-stop）：跑 `bash scripts/auto-loop.sh unlock` 釋放 mutex。
 
 ## Fail-stop 原則
 
