@@ -235,6 +235,194 @@ upgrade_existing() {
 }
 
 # -----------------------------------------------------------------------------
+# Remove mode
+# -----------------------------------------------------------------------------
+reverse_merge_settings_json() {
+    # $1 target settings, $2 framework settings, $3 output path.
+    # Returns 0 if output written, 1 if target settings doesn't exist.
+    local target_settings="$1" fw_settings="$2" out="$3"
+    [ -f "$target_settings" ] || return 1
+    jq -s '
+      .[0] as $target | .[1] as $fw |
+      $target |
+      .permissions.allow = (($target.permissions.allow // []) - ($fw.permissions.allow // [])) |
+      .hooks.SessionStart = ([($target.hooks.SessionStart // [])[] | .hooks |= map(select(.command != ($fw.hooks.SessionStart[0].hooks[0].command // "__nope__")))] | map(select(.hooks | length > 0))) |
+      .hooks.Notification = ([($target.hooks.Notification // [])[] | .hooks |= map(select(.command != ($fw.hooks.Notification[0].hooks[0].command // "__nope__")))] | map(select(.hooks | length > 0))) |
+      (if .statusLine == $fw.statusLine then del(.statusLine) else . end) |
+      (if (.hooks.SessionStart // [] | length) == 0 then del(.hooks.SessionStart) else . end) |
+      (if (.hooks.Notification // [] | length) == 0 then del(.hooks.Notification) else . end) |
+      (if (.hooks // {}) == {} then del(.hooks) else . end) |
+      (if (.permissions.allow // [] | length) == 0 then del(.permissions.allow) else . end) |
+      (if (.permissions // {}) == {} then del(.permissions) else . end)
+    ' "$target_settings" "$fw_settings" > "$out"
+    return 0
+}
+
+remove_preflight() {
+    local target="$1"
+    [ -d "$target" ] || { echo "ERROR: $target does not exist" >&2; exit 1; }
+    [ -f "$target/.claude/commands/inbox.md" ] || {
+        echo "ERROR: Not a woody-harness project, nothing to remove." >&2
+        exit 1
+    }
+}
+
+remove_harness() {
+    local target apply
+    target="$(cd "$1" && pwd)"
+    apply="${2:-}"
+
+    remove_preflight "$target"
+
+    echo "[remove] Target: $target"
+    echo ""
+
+    local will_delete=()       # entries: rel
+    local will_skip=()         # entries: rel|src|dst (user-modified, kept)
+    local entry rel src_rel src dst h_src h_dst
+
+    for entry in "${FRAMEWORK_FILES[@]}"; do
+        rel="${entry%%|*}"
+        dst="$target/$rel"
+        [ -f "$dst" ] && will_delete+=("$rel")
+    done
+
+    # _inbox.md always deleted (per spec — user must handle queued prompt before remove)
+    if [ -f "$target/docs/prompts/_inbox.md" ]; then
+        will_delete+=("docs/prompts/_inbox.md")
+    fi
+
+    # Skip-if-modified: delete only if pristine
+    for entry in "${SKIP_IF_MODIFIED_FILES[@]}"; do
+        rel="${entry%%|*}"
+        src_rel="${entry##*|}"
+        src="$HARNESS_DIR/$src_rel"
+        dst="$target/$rel"
+        [ -f "$dst" ] || continue
+        h_src=$(file_hash "$src")
+        h_dst=$(file_hash "$dst")
+        if [ "$h_src" = "$h_dst" ]; then
+            will_delete+=("$rel")
+        else
+            will_skip+=("$rel|$src|$dst")
+        fi
+    done
+
+    # Reverse-merge settings.json analysis
+    local fw_settings="$HARNESS_DIR/.claude/settings.json"
+    local target_settings="$target/.claude/settings.json"
+    local merged_tmp settings_action settings_result_summary
+    merged_tmp=$(mktemp)
+    settings_action=""        # "delete" | "rewrite" | "none"
+    settings_result_summary=""
+
+    if [ -f "$target_settings" ]; then
+        if reverse_merge_settings_json "$target_settings" "$fw_settings" "$merged_tmp"; then
+            if ! validate_json "$merged_tmp"; then
+                rm -f "$merged_tmp"
+                echo "ERROR: settings.json reverse-merge produced invalid JSON — aborting" >&2
+                exit 1
+            fi
+            local result_compact
+            result_compact=$(jq -c '.' "$merged_tmp")
+            if [ "$result_compact" = "{}" ]; then
+                settings_action="delete"
+                settings_result_summary="empty after strip → file will be removed"
+            else
+                settings_action="rewrite"
+                settings_result_summary="$result_compact"
+            fi
+        fi
+    else
+        settings_action="none"
+        settings_result_summary="(no target settings.json)"
+    fi
+
+    # Slug for memory dir hint
+    local slug mem_dir
+    slug=$(echo "$target" | sed 's|/|-|g')
+    mem_dir="$HOME/.claude-work/projects/$slug"
+
+    # Print plan
+    echo "Would delete (${#will_delete[@]} files):"
+    local x
+    for x in "${will_delete[@]:-}"; do
+        [ -z "$x" ] && continue
+        echo "  $x"
+    done
+    echo ""
+
+    echo "Would reverse-merge .claude/settings.json:"
+    case "$settings_action" in
+        delete)   echo "  → $settings_result_summary" ;;
+        rewrite)  echo "  → result: $settings_result_summary" ;;
+        none)     echo "  $settings_result_summary" ;;
+    esac
+    echo ""
+
+    if [ ${#will_skip[@]} -gt 0 ]; then
+        echo "Skipped — user-modified (${#will_skip[@]}):"
+        for x in "${will_skip[@]}"; do
+            rel="${x%%|*}"
+            local rest="${x#*|}"
+            local s="${rest%%|*}"
+            local d="${rest##*|}"
+            echo "  $rel   [hash differs from framework, kept as-is]"
+            echo "    → diff: diff $d $s"
+        done
+        echo ""
+    fi
+
+    echo "Would remove empty dirs (if any):"
+    echo "  scripts/, .claude/commands/, .claude/"
+    echo ""
+
+    echo "Would NOT touch:"
+    echo "  CLAUDE.md, RESUME.md, .gitignore"
+    echo "  docs/prompts/_archive/  (your prompt history)"
+    echo "  $mem_dir/  (your memory — preserved)"
+    echo ""
+
+    echo "Memory dir location (run manually if you want it gone):"
+    echo "  rm -rf $mem_dir"
+    echo ""
+
+    if [ "$apply" != "--apply" ]; then
+        rm -f "$merged_tmp"
+        echo "Run with --apply to actually delete."
+        return 0
+    fi
+
+    # Apply
+    local n_deleted=0
+    for x in "${will_delete[@]:-}"; do
+        [ -z "$x" ] && continue
+        dst="$target/$x"
+        if [ -f "$dst" ]; then
+            rm -f "$dst"
+            n_deleted=$((n_deleted + 1))
+        fi
+    done
+
+    case "$settings_action" in
+        delete)
+            rm -f "$target_settings"
+            ;;
+        rewrite)
+            cp "$merged_tmp" "$target_settings"
+            ;;
+    esac
+    rm -f "$merged_tmp"
+
+    # Empty dir cleanup (rmdir fails silently on non-empty)
+    rmdir "$target/scripts" 2>/dev/null || true
+    rmdir "$target/.claude/commands" 2>/dev/null || true
+    rmdir "$target/.claude" 2>/dev/null || true
+
+    echo "Done. $n_deleted files deleted. Memory preserved at $mem_dir/."
+}
+
+# -----------------------------------------------------------------------------
 # Main dispatcher
 # -----------------------------------------------------------------------------
 MODE="${1:-}"
@@ -248,8 +436,12 @@ case "$MODE" in
         exit 0
         ;;
     --remove)
-        echo "ERROR: --remove not implemented yet" >&2
-        exit 1
+        shift
+        [ $# -ge 1 ] || { echo "Usage: bash bootstrap.sh --remove <path> [--apply]" >&2; exit 1; }
+        TARGET_ARG="$1"; shift
+        APPLY_ARG="${1:-}"
+        remove_harness "$TARGET_ARG" "$APPLY_ARG"
+        exit 0
         ;;
     "")
         echo "Usage:"
