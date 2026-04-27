@@ -86,6 +86,8 @@ These templates have placeholder values. After bootstrap, localize manually:
 
 ---
 
+> **Auto-captured lessons**: feedback memories don't have to be hand-written. Inbox rounds that hit problems (blockers, FAIL lines, "next time" notes) auto-stage as candidate lessons; review and promote them via `scripts/lessons.sh`. See [LESSONS.md](LESSONS.md).
+
 ## Adding a new memory
 
 1. Write a file in the memory directory with the frontmatter format above. Choose a descriptive filename: `project_phase3_handoff.md`, `feedback_no_inline_comments.md`, etc.

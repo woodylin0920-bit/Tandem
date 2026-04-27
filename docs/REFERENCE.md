@@ -35,7 +35,8 @@ Flat list of every CLI mode, slash command, script, hook, and memory location. F
 | | `bash scripts/memory.sh list` | List memory files |
 | | `bash scripts/memory.sh sync` | Symlink shared layer into current project + regenerate combined MEMORY.md |
 | | `bash scripts/memory.sh promote` | Interactive helper to migrate project memory entries to shared layer (promote/keep/delete) |
-| `test-bootstrap.sh` | `bash scripts/test-bootstrap.sh` | 32-check regression test on bootstrap output |
+| `lessons.sh` | `bash scripts/lessons.sh count\|list\|extract\|review` | Auto-extracted lesson candidates from inbox archives. See `docs/LESSONS.md`. |
+| `test-bootstrap.sh` | `bash scripts/test-bootstrap.sh` | 36-check regression test on bootstrap output |
 | `smoke.sh` | `bash scripts/smoke.sh` | Real-machine smoke test runner (per docs/SMOKE_TESTING.md) |
 
 ## Hooks (`.claude/settings.json`)
@@ -72,6 +73,7 @@ Every inbox prompt declares model + effort + commits near the top in a `## Execu
 
 | File | Purpose |
 |---|---|
+| `docs/LESSONS.md` | Lessons loop architecture: auto-stage on archive → extract via headless claude → review and promote to shared memory. |
 | `docs/MODEL_GUIDE.md` | Heuristic table for picking model + /effort per inbox round, with `## Execution profile` convention. |
 | `docs/TUTORIAL.md` | First-time setup walkthrough |
 | `docs/WORKFLOW.md` | Plan/execute cycle philosophy |
