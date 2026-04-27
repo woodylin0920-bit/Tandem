@@ -2,12 +2,35 @@
 # statusline.sh — Tandem status indicator for Claude Code statusLine.
 # Output: "📥 <state> · <short commit> · last: <emoji>"
 # Must be fast (<100ms): only git log, ls, head, grep — no network, no tar.
+# Mtime cache: skips full scan when inputs haven't changed.
 set -e
 
 root="$(git rev-parse --show-toplevel 2>/dev/null)" || { echo "(not a git repo)"; exit 0; }
 cd "$root"
 # shellcheck source=scripts/_paths.sh
 source "$root/scripts/_paths.sh"
+
+# --- Mtime cache ---
+CACHE_FILE="$HOME/.claude-work/.statusline-cache"
+_mtime() { stat -f '%m' "$1" 2>/dev/null || echo 0; }
+_mtime_sum() {
+    local s=0
+    s=$(( s + $(_mtime "docs/prompts/_inbox.md") ))
+    s=$(( s + $(_mtime "docs/prompts/_queue") ))
+    s=$(( s + $(_mtime ".git/HEAD") ))
+    local latest
+    latest=$(ls -t docs/prompts/[0-9]*-*.md docs/prompts/phase-*.md 2>/dev/null | grep -v '_archive/' | head -1 || true)
+    [ -n "$latest" ] && s=$(( s + $(_mtime "$latest") ))
+    echo "$s"
+}
+current_sum=$(_mtime_sum)
+if [ -f "$CACHE_FILE" ]; then
+    cached_sum=$(head -1 "$CACHE_FILE")
+    if [ "$cached_sum" = "$current_sum" ]; then
+        tail -n +2 "$CACHE_FILE"
+        exit 0
+    fi
+fi
 
 # Inbox state — strip HTML comments, then check for substantive content
 _inbox_real=$(sed '/<!--/,/-->/d' docs/prompts/_inbox.md 2>/dev/null | tr -d '[:space:]')
@@ -52,4 +75,6 @@ if [ -f "$STAGING" ]; then
     fi
 fi
 
-echo "$inbox$queue_seg · $last_commit · last: $result_emoji$lessons_seg"
+output="$inbox$queue_seg · $last_commit · last: $result_emoji$lessons_seg"
+printf '%s\n%s\n' "$current_sum" "$output" > "$CACHE_FILE" 2>/dev/null || true
+echo "$output"
