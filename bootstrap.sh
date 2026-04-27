@@ -18,11 +18,13 @@ FRAMEWORK_FILES=(
     ".claude/commands/sync.md|.claude/commands/sync.md"
     ".claude/commands/codex-audit.md|.claude/commands/codex-audit.md"
     ".claude/commands/phase-gate.md|.claude/commands/phase-gate.md"
+    ".claude/commands/auto.md|.claude/commands/auto.md"
     "scripts/archive-prompts.sh|scripts/archive-prompts.sh"
     "scripts/memory.sh|scripts/memory.sh"
     "scripts/statusline.sh|scripts/statusline.sh"
     "scripts/session-briefing.sh|scripts/session-briefing.sh"
     "scripts/notify-blocked.sh|scripts/notify-blocked.sh"
+    "scripts/auto-loop.sh|scripts/auto-loop.sh"
 )
 
 # Hash-compared files: pristine → upgrade overwrites / remove deletes;
@@ -555,7 +557,11 @@ cp "$HARNESS_DIR/scripts/statusline.sh" scripts/statusline.sh
 cp "$HARNESS_DIR/scripts/session-briefing.sh" scripts/session-briefing.sh
 cp "$HARNESS_DIR/scripts/notify-blocked.sh" scripts/notify-blocked.sh
 cp "$HARNESS_DIR/scripts/lessons.sh" scripts/lessons.sh
+cp "$HARNESS_DIR/scripts/auto-loop.sh" scripts/auto-loop.sh
 cp "$HARNESS_DIR/.claude/commands/sync.md" .claude/commands/
+cp "$HARNESS_DIR/.claude/commands/auto.md" .claude/commands/
+mkdir -p docs/prompts/_queue
+touch docs/prompts/_queue/.gitkeep
 
 # Substitute project name placeholder
 sed -i '' "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" CLAUDE.md RESUME.md 2>/dev/null || true

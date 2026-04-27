@@ -57,6 +57,10 @@ assert "scripts/session-briefing.sh exists" test -f scripts/session-briefing.sh
 assert "scripts/notify-blocked.sh exists"  test -f scripts/notify-blocked.sh
 assert "scripts/lessons.sh exists"         test -f scripts/lessons.sh
 assert "scripts/lessons.sh executable"     test -x scripts/lessons.sh
+assert ".claude/commands/auto.md exists"   test -f .claude/commands/auto.md
+assert "scripts/auto-loop.sh exists"       test -f scripts/auto-loop.sh
+assert "scripts/auto-loop.sh executable"   test -x scripts/auto-loop.sh
+assert "docs/prompts/_queue/.gitkeep exists" test -f docs/prompts/_queue/.gitkeep
 
 echo ""
 echo "=== Substitution ==="
