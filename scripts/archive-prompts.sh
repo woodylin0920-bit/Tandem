@@ -39,7 +39,7 @@ detect_and_stage_lesson() {
 
     # Bug 1 fix: Status is "blocked" only when ❌ present and ✅ NOT present on same line
     local status_line has_blocked=""
-    status_line=$(echo "$result_content" | grep -m1 -E '^\*\*Status\*\*' || true)
+    status_line=$(echo "$result_content" | grep -m1 -E '^(\*\*Status\*\*|Status):' || true)
     if [ -n "$status_line" ] && echo "$status_line" | grep -q "❌" && ! echo "$status_line" | grep -q "✅"; then
         has_blocked="$status_line"
     fi
