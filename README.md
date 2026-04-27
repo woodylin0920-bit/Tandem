@@ -19,7 +19,7 @@ If your habits look like mine — Claude Code (or any model with a markdown-awar
 - **Plan / Execute session split** — planner session writes prompts, executor session ships them via `/inbox` slash command. Markdown-based interface — works with Claude Code today, portable to any model that can read text prompts and produce file edits.
 - **Inbox handoff** — `docs/prompts/_inbox.md` is the cross-session mailbox; archived per round with `## Result` block convention
 - **Memory system** — auto-loaded preferences, workflow rules, and project state in `~/.claude-work/projects/<slug>/memory/`
-- **Cross-project shared memory** — your preferences, workflow rules, and lessons-learned live once at `~/.claude-work/_shared/memory/` and symlink into every project. Add a memory once, get it everywhere. See [docs/SHARED_MEMORY.md](docs/SHARED_MEMORY.md).
+- **Cross-project shared memory** — preferences, workflow rules, lessons-learned at `~/.claude-work/_shared/memory/` symlink into every project. See [docs/SHARED_MEMORY.md](docs/SHARED_MEMORY.md). (Why this matters → "Why Tandem" below.)
 - **Slash commands** — `/inbox`, `/sync`, `/brief`, `/codex-audit`, `/phase-gate` (see [docs/REFERENCE.md](docs/REFERENCE.md))
 - **Status line** — terminal-bottom live indicator: `📥 inbox state · last commit · last result emoji`
 - **Hooks** — `SessionStart` auto-briefing (RESUME + commits + latest archive Result), `Notification` alert when executor stalls (Funk + osascript banner)
@@ -72,10 +72,11 @@ bootstrapped project after one phase shipped. Browse the files + read
 - [x] **Phase 2** — codex audit + safety audit + smoke test templates
 - [x] **Phase 4** — onboarding (TUTORIAL, HARNESS_ETHOS, TROUBLESHOOTING, MEMORY_SYSTEM, CONTRIBUTING) + `examples/hello-cli/` + feedback loop (statusline, /sync, /brief, notify-blocked) + lifecycle (bootstrap upgrade/remove via S-1)
 - [x] **v0.4.1 release** — polish r2-r5 + S-1 (bootstrap modes) + retro
-- [x] **T-1a** — cross-project shared memory layer (full: α infra + β promote tool + real promotion of 12 feedback to shared)
+- [x] **T-1a** — cross-project shared memory layer (full: α infra + β promote tool + real promotion of 12 feedback memories to shared)
 - [x] **S-1** — bootstrap upgrade/remove modes
-- [x] **Phase 0** — rename to Tandem
-- [ ] **Phase A** (in progress) — narrative refactor for model-agnostic positioning
+- [x] **Phase 0** — rename to Tandem (repo + dir + GitHub + memory slug) + follow-up cleanup + bootstrap shared-seed idempotency fix
+- [x] **Phase A** — narrative refactor for model-agnostic positioning (README + HARNESS_ETHOS + ATTRIBUTION + TUTORIAL + WORKFLOW + CONTRIBUTING + examples)
+- [x] **v0.4.2 release** — Phase A + T-1a integration + Phase 0 rename
 - [ ] **Phase B** — model + effort recommendation system (was 4e)
 - [ ] **Phase C** — learning loop (`/lessons` slash)
 - ~~Phase 3: CI / hooks / push notifications~~ (deferred — see [docs/FUTURE.md](docs/FUTURE.md))
