@@ -27,6 +27,12 @@ case "$cmd" in
     path="${2:-}"
     [ -z "$path" ] && { echo "usage: auto-loop.sh archive <path>" >&2; exit 1; }
     [ -f "$path" ] || { echo "file not found: $path" >&2; exit 1; }
+    target=$(realpath "$path")
+    queue_dir=$(realpath "$QUEUE_DIR")
+    case "$target" in
+      "$queue_dir"/*) ;;
+      *) echo "[auto-loop] archive refused: path outside _queue/: $path" >&2; exit 1 ;;
+    esac
     base=$(basename "$path")
     # Extract YYYY-MM from YYYYMMDD prefix (queue files: YYYYMMDD-HHMMSS-slug.md)
     prefix=$(echo "$base" | grep -oE '^[0-9]{8}' || true)
