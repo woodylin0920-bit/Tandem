@@ -19,6 +19,7 @@ FRAMEWORK_FILES=(
     ".claude/commands/codex-audit.md|.claude/commands/codex-audit.md"
     ".claude/commands/phase-gate.md|.claude/commands/phase-gate.md"
     ".claude/commands/auto.md|.claude/commands/auto.md"
+    ".claude/commands/recommend.md|.claude/commands/recommend.md"
     "scripts/archive-prompts.sh|scripts/archive-prompts.sh"
     "scripts/memory.sh|scripts/memory.sh"
     "scripts/statusline.sh|scripts/statusline.sh"
