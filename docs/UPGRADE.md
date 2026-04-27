@@ -28,7 +28,7 @@ bash ~/woody-harness/bootstrap.sh --upgrade-existing /path/to/target --apply
 1. Target path must exist
 2. Target must be a git repo (`.git/` present) — abort otherwise; run `git init` first
 3. Target must look like a woody-harness project (`.claude/commands/inbox.md` exists)
-4. Working tree dirty → warn but continue (so you can review the upgrade as a single commit)
+4. Working tree dirty → warn but continue (so you can review the upgrade as a single commit). If you'd rather not mix existing changes with upgrade output, run `git stash` first or commit before upgrading.
 
 ## Sample dry-run output
 

@@ -82,7 +82,11 @@ upgrade_preflight() {
         exit 1
     }
     if ! git -C "$target" diff-index --quiet HEAD -- 2>/dev/null; then
-        echo "[upgrade] WARN: target working tree is dirty (continuing anyway)"
+        echo ""
+        echo "⚠️  WARNING: target working tree is dirty"
+        echo "   Continuing — your existing changes will mix with upgrade changes."
+        echo "   Consider 'git stash' first, or commit existing changes, before re-running."
+        echo ""
     fi
 }
 
@@ -152,7 +156,11 @@ upgrade_existing() {
     fi
 
     # Print plan
-    echo "Would overwrite (${#will_overwrite[@]}):"
+    if [ "$apply" = "--apply" ]; then
+        echo "Overwriting (${#will_overwrite[@]}):"
+    else
+        echo "Would overwrite (${#will_overwrite[@]}):"
+    fi
     local x
     for x in "${will_overwrite[@]:-}"; do
         [ -z "$x" ] && continue
@@ -163,7 +171,11 @@ upgrade_existing() {
     done
     echo ""
 
-    echo "Would merge .claude/settings.json:"
+    if [ "$apply" = "--apply" ]; then
+        echo "Merging .claude/settings.json:"
+    else
+        echo "Would merge .claude/settings.json:"
+    fi
     if [ -f "$target_settings" ]; then
         local new_perms
         new_perms=$(jq -r --slurpfile fw "$fw_settings" --slurpfile tgt "$target_settings" \
@@ -195,8 +207,11 @@ upgrade_existing() {
             local rest="${x#*|}"
             local s="${rest%%|*}"
             local d="${rest##*|}"
+            local short_s short_d
+            short_s=$(echo "$s" | sed "s|$HOME|~|")
+            short_d=$(echo "$d" | sed "s|$HOME|~|")
             echo "  $rel"
-            echo "    → diff: diff $d $s"
+            echo "    → diff: diff $short_d $short_s"
         done
         echo ""
     fi
@@ -215,6 +230,7 @@ upgrade_existing() {
 
     # Apply
     local n_written=0
+    local settings_merged=false
     for x in "${will_overwrite[@]:-}"; do
         [ -z "$x" ] && continue
         rel="${x%%|*}"
@@ -229,9 +245,27 @@ upgrade_existing() {
     mkdir -p "$(dirname "$target_settings")"
     cp "$merged_tmp" "$target_settings"
     rm -f "$merged_tmp"
-    n_written=$((n_written + 1))
+    settings_merged=true
 
-    echo "Done. $n_written files written. Run 'git -C $target diff' to inspect."
+    # Build summary based on what actually happened
+    local parts=()
+    if [ "$n_written" -gt 0 ]; then
+        local _s=""
+        [ "$n_written" -ne 1 ] && _s="s" || true
+        parts+=("$n_written file${_s} written")
+    fi
+    [ "$settings_merged" = "true" ] && parts+=("settings.json merged") || true
+    local summary
+    if [ "${#parts[@]}" -gt 0 ]; then
+        summary=$(IFS=", "; echo "${parts[*]}")
+    else
+        summary="no changes"
+    fi
+
+    echo ""
+    echo "Done. $summary."
+    echo "Run 'git -C $target status' to see all new/modified files,"
+    echo "then 'git -C $target diff' for content of modified files."
 }
 
 # -----------------------------------------------------------------------------
@@ -344,7 +378,11 @@ remove_harness() {
     mem_dir="$HOME/.claude-work/projects/$slug"
 
     # Print plan
-    echo "Would delete (${#will_delete[@]} files):"
+    if [ "$apply" = "--apply" ]; then
+        echo "Deleting (${#will_delete[@]} files):"
+    else
+        echo "Would delete (${#will_delete[@]} files):"
+    fi
     local x
     for x in "${will_delete[@]:-}"; do
         [ -z "$x" ] && continue
@@ -352,7 +390,11 @@ remove_harness() {
     done
     echo ""
 
-    echo "Would reverse-merge .claude/settings.json:"
+    if [ "$apply" = "--apply" ]; then
+        echo "Reversing-merge .claude/settings.json:"
+    else
+        echo "Would reverse-merge .claude/settings.json:"
+    fi
     case "$settings_action" in
         delete)   echo "  → $settings_result_summary" ;;
         rewrite)  echo "  → result: $settings_result_summary" ;;
@@ -367,17 +409,28 @@ remove_harness() {
             local rest="${x#*|}"
             local s="${rest%%|*}"
             local d="${rest##*|}"
+            local short_s short_d
+            short_s=$(echo "$s" | sed "s|$HOME|~|")
+            short_d=$(echo "$d" | sed "s|$HOME|~|")
             echo "  $rel   [hash differs from framework, kept as-is]"
-            echo "    → diff: diff $d $s"
+            echo "    → diff: diff $short_d $short_s"
         done
         echo ""
     fi
 
-    echo "Would remove empty dirs (if any):"
+    if [ "$apply" = "--apply" ]; then
+        echo "Removing empty dirs (if any):"
+    else
+        echo "Would remove empty dirs (if any):"
+    fi
     echo "  scripts/, .claude/commands/, .claude/"
     echo ""
 
-    echo "Would NOT touch:"
+    if [ "$apply" = "--apply" ]; then
+        echo "NOT touching:"
+    else
+        echo "Would NOT touch:"
+    fi
     echo "  CLAUDE.md, RESUME.md, .gitignore"
     echo "  docs/prompts/_archive/  (your prompt history)"
     echo "  $mem_dir/  (your memory — preserved)"
@@ -419,7 +472,9 @@ remove_harness() {
     rmdir "$target/.claude/commands" 2>/dev/null || true
     rmdir "$target/.claude" 2>/dev/null || true
 
+    echo ""
     echo "Done. $n_deleted files deleted. Memory preserved at $mem_dir/."
+    echo "Run 'git -C $target status' to see deleted files before committing."
 }
 
 # -----------------------------------------------------------------------------
