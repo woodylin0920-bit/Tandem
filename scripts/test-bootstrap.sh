@@ -2,7 +2,6 @@
 # Smoke test for bootstrap.sh — verify a fresh bootstrap produces a working project.
 # Run from harness repo root: bash scripts/test-bootstrap.sh
 # Exits 0 on pass, 1 on any failure. Cleans up test project + memory dir on exit.
-# 36 assertions total.
 set -euo pipefail
 
 HARNESS_DIR="$(cd "$(dirname "$0")/.." && pwd)"
@@ -61,6 +60,8 @@ assert ".claude/commands/auto.md exists"   test -f .claude/commands/auto.md
 assert "scripts/auto-loop.sh exists"       test -f scripts/auto-loop.sh
 assert "scripts/auto-loop.sh executable"   test -x scripts/auto-loop.sh
 assert "docs/prompts/_queue/.gitkeep exists" test -f docs/prompts/_queue/.gitkeep
+assert "scripts/shared-init.sh exists"     test -f scripts/shared-init.sh
+assert "scripts/shared-init.sh executable" test -x scripts/shared-init.sh
 
 echo ""
 echo "=== Substitution ==="
@@ -84,9 +85,9 @@ echo ""
 echo "=== Memory dir (~/.claude-work/projects/<slug>/memory/) ==="
 assert "memory dir exists"             test -d "$MEM_DIR"
 assert "MEMORY.md present"             test -f "$MEM_DIR/MEMORY.md"
-assert "feedback_terse_zh.md present"  test -f "$MEM_DIR/feedback_terse_zh.md"
-assert "feedback_workflow_split.md present" test -f "$MEM_DIR/feedback_workflow_split.md"
-assert "feedback_model_split.md present"    test -f "$MEM_DIR/feedback_model_split.md"
+assert "MEMORY.md has BEGIN shared marker"  "grep -q '<!-- BEGIN shared' '$MEM_DIR/MEMORY.md'"
+assert "MEMORY.md has END shared marker"    "grep -q '<!-- END shared -->' '$MEM_DIR/MEMORY.md'"
+assert "MEMORY.md has BEGIN project-local"  "grep -q '<!-- BEGIN project-local' '$MEM_DIR/MEMORY.md'"
 assert "env_paths.md present"          test -f "$MEM_DIR/env_paths.md"
 
 echo ""

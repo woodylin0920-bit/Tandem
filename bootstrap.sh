@@ -22,6 +22,7 @@ FRAMEWORK_FILES=(
     ".claude/commands/recommend.md|.claude/commands/recommend.md"
     "scripts/archive-prompts.sh|scripts/archive-prompts.sh"
     "scripts/memory.sh|scripts/memory.sh"
+    "scripts/shared-init.sh|scripts/shared-init.sh"
     "scripts/statusline.sh|scripts/statusline.sh"
     "scripts/session-briefing.sh|scripts/session-briefing.sh"
     "scripts/notify-blocked.sh|scripts/notify-blocked.sh"
@@ -271,6 +272,16 @@ upgrade_existing() {
     echo "Done. $summary."
     echo "Run 'git -C $target status' to see all new/modified files,"
     echo "then 'git -C $target diff' for content of modified files."
+
+    # Sync shared layer (same logic as new-project flow)
+    if [ -d "$HOME/.claude-work/shared" ]; then
+        echo ""
+        echo "[upgrade] linking shared layer..."
+        bash "$target/scripts/memory.sh" sync >/dev/null 2>&1 || echo "[upgrade] WARN: shared sync failed (non-fatal) — run 'bash scripts/memory.sh sync' manually"
+    else
+        echo ""
+        echo "[upgrade] no ~/.claude-work/shared/ — run 'bash scripts/shared-init.sh' to create"
+    fi
 }
 
 # -----------------------------------------------------------------------------
@@ -559,6 +570,7 @@ cp "$HARNESS_DIR/scripts/session-briefing.sh" scripts/session-briefing.sh
 cp "$HARNESS_DIR/scripts/notify-blocked.sh" scripts/notify-blocked.sh
 cp "$HARNESS_DIR/scripts/lessons.sh" scripts/lessons.sh
 cp "$HARNESS_DIR/scripts/auto-loop.sh" scripts/auto-loop.sh
+cp "$HARNESS_DIR/scripts/shared-init.sh" scripts/shared-init.sh
 cp "$HARNESS_DIR/.claude/commands/sync.md" .claude/commands/
 cp "$HARNESS_DIR/.claude/commands/auto.md" .claude/commands/
 mkdir -p docs/prompts/_queue
@@ -570,42 +582,17 @@ sed -i '' "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" CLAUDE.md RESUME.md 2>/dev/null |
 # Setup memory directory
 SLUG=$(echo "$PROJECT_DIR" | sed 's|/|-|g')
 MEM_DIR="$HOME/.claude-work/projects/$SLUG/memory"
-SHARED_MEM="$HOME/.claude-work/_shared/memory"
 
-SHARED_SEEDS=(feedback_terse_zh.md feedback_workflow_split.md feedback_model_split.md)
 PROJECT_SEEDS=(env_paths.md)
 
-# 1. Seed _shared/ — idempotent per-file (don't skip if dir exists, only skip individual files)
-mkdir -p "$SHARED_MEM"
-
-seeded_any=0
-for f in "${SHARED_SEEDS[@]}"; do
-    if [ ! -f "$SHARED_MEM/$f" ]; then
-        cp "$HARNESS_DIR/templates/memory/$f" "$SHARED_MEM/"
-        seeded_any=1
-    fi
-done
-
-# Seed shared MEMORY.md if missing — don't clobber if user has promoted content into it
-if [ ! -f "$SHARED_MEM/MEMORY.md" ]; then
-    cat > "$SHARED_MEM/MEMORY.md" <<'EOF'
-- [terse Mandarin updates](feedback_terse_zh.md) — reply in 繁中, 1-2 sentences, mid-task pings = status check not stop
-- [planning-here, execute-elsewhere workflow](feedback_workflow_split.md) — this window plans + writes prompts; user runs them via /inbox in separate Sonnet session.
-- [model split: Opus plans, Sonnet executes](feedback_model_split.md) — terminal=Opus 4.7 (planning), terminal=Sonnet (executor). Make execution prompts very explicit.
-EOF
-    seeded_any=1
-fi
-
-[ "$seeded_any" = "1" ] && echo "[bootstrap] Seeded missing shared memory files at $SHARED_MEM"
-
-# 2. Project memory dir: only project-specific files
+# 1. Project memory dir: only project-specific files
 mkdir -p "$MEM_DIR"
 for f in "${PROJECT_SEEDS[@]}"; do
     cp "$HARNESS_DIR/templates/memory/$f" "$MEM_DIR/"
 done
 sed -i '' "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" "$MEM_DIR"/env_paths.md 2>/dev/null || true
 
-# 3. Initial project MEMORY.md with markers + project-local seed entry
+# 2. Initial project MEMORY.md with markers + project-local seed entry
 cat > "$MEM_DIR/MEMORY.md" <<'EOF'
 <!-- BEGIN shared (auto-managed by scripts/memory.sh sync — do not edit between markers) -->
 <!-- END shared -->
@@ -618,8 +605,14 @@ EOF
 # git init
 git init -q
 
-# 4. Sync shared layer into project memory (needs git to be initialized)
-bash scripts/memory.sh sync >/dev/null 2>&1 || echo "[bootstrap] WARN: memory sync failed (run 'bash scripts/memory.sh sync' manually)"
+# 3. Sync shared layer (requires ~/.claude-work/shared/ to exist; skip+warn if not)
+if [ -d "$HOME/.claude-work/shared" ]; then
+    echo "[bootstrap] linking shared layer..."
+    bash scripts/memory.sh sync >/dev/null 2>&1 || echo "[bootstrap] WARN: shared sync failed (non-fatal) — run 'bash scripts/memory.sh sync' manually"
+else
+    echo "[bootstrap] no ~/.claude-work/shared/ — run 'bash scripts/shared-init.sh' to create"
+    echo "[bootstrap] WARN: memory sync skipped; shared entries will not appear in MEMORY.md until you run 'bash scripts/memory.sh sync'"
+fi
 
 git add .
 git commit -q -m "chore: bootstrap from Tandem"
