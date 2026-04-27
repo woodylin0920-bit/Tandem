@@ -51,14 +51,15 @@ detect_and_stage_lesson() {
     fi
 
     # Bug 2 fix: FAIL only counts inside Result block, outside code fences, AND not on a "PASS / FAIL" template line
+    # Bug 4 fix: restrict to ^- bullet lines; exclude negated "no FAIL" meta-text
     local has_fail=""
     local fail_line
-    fail_line=$(echo "$result_content" | grep -E '\bFAIL\b' | grep -v 'PASS' | head -1 || true)
+    fail_line=$(echo "$result_content" | grep -E '^- .*\bFAIL\b' | grep -v 'PASS' | grep -viE '^- .*\bno\b.*\bFAIL\b' | head -1 || true)
     [ -n "$fail_line" ] && has_fail="$fail_line"
 
-    # Keywords (also Result-block-scoped now)
+    # Keywords (also Result-block-scoped now); restrict to ^- bullet lines
     local has_keyword=""
-    has_keyword=$(echo "$result_content" | grep -m1 -iE 'next time|should (have|do|run|abort)|lesson learned' || true)
+    has_keyword=$(echo "$result_content" | grep -m1 -iE '^- .*(next time|should (have|do|run|abort)|lesson learned)' || true)
 
     if [ -z "$has_blocked" ] && [ -z "$has_blockers" ] && [ -z "$has_fail" ] && [ -z "$has_keyword" ]; then
         return 0
